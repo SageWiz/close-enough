@@ -8,7 +8,13 @@ This is the plain-English version of the math in [`quiz-core.js`](quiz-core.js).
 
 **How touchy** (the Y axis) is how comfortable you are with physical contact, and with whom.
 
-Each axis gets 10 questions, and the order alternates between the two.
+Each axis gets 10 questions.
+
+## Question order
+
+Everyone gets a different order. Each time the quiz starts, it shuffles the questions but keeps the same rhythm: a sharing question, then a touch question, and the touch questions alternate between "who can" and "how do you feel". So the order is random, but nobody gets five touch questions in a row.
+
+Shuffling keeps any one question from always coming first, when people are still warming up, or last, when they're rushing to finish. The order has no effect on the score, since every answer is scored the same wherever it appears. Each saved response records the order that person saw, so position effects can be checked later.
 
 ## The two kinds of questions
 
@@ -112,7 +118,7 @@ The [stats page](dashboard.html) groups everyone who left "add my answers" check
 - **Rushed runs.** Finishes under 45 seconds are hidden by default. Twenty questions in under 45 seconds is a little over 2 seconds each, which usually means tapping through without reading. You can switch the filter off.
 - **Typical answer.** Per question, the stats page uses the ordinary median. The coloured bar shows the full spread, so you can see when a "typical" answer hides a big split.
 - **Most split.** Questions are ranked by the standard deviation of their answers, after scaling to 0 to 1.
-- **Seconds per question.** The median time the question was on screen before it was answered, including any time spent after coming back to it.
+- **Seconds per question.** The median time the question was on screen before it was answered, including any time spent after coming back to it. Because the order is shuffled, a question isn't slower just because it always came first.
 - **Finish rate.** Finished quizzes divided by started quizzes, counting only people who had the box checked when they started. It follows the time, device and source filters, and counts retakes and rushed runs, since those still finished.
 
 ## Known limits
