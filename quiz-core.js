@@ -60,12 +60,13 @@
     { id: 't_hold_hands',    short: 'Hold hands',         q: "Who can hold hands with you while you're walking?" }
   ].map(o => ({ ...o, axis: 'touch', type: 'ring', dir: 'receive' }));
 
+  // who: the ring the person in the question belongs to (shown on the rings, not used in scoring)
   const TOUCH_FEEL = [
-    { id: 'f_party_hug',    dir: 'receive', short: 'Party goodbye hug',   q: 'Someone you met an hour ago at a party hugs you goodbye.' },
-    { id: 'f_touch_arm',    dir: 'give',    short: 'Touch arm talking',   q: "Touching a friend's arm or shoulder while you're talking to them." },
-    { id: 'f_coworker_pat', dir: 'receive', short: 'Coworker back pat',   q: 'A coworker gives you a quick pat on the back after a good meeting.' },
-    { id: 'f_first_hug',    dir: 'give',    short: 'First to hug',        q: 'Being the first to go in for a hug when you see your friends.' },
-    { id: 'f_back_rub',     dir: 'give',    short: 'Back rub for a friend', q: "Rubbing a close friend's back when they're stressed out." }
+    { id: 'f_party_hug',    dir: 'receive', who: 6, short: 'Party goodbye hug',   q: 'Someone you met an hour ago at a party hugs you goodbye.' },
+    { id: 'f_touch_arm',    dir: 'give',    who: 3, short: 'Touch arm talking',   q: "Touching a friend's arm or shoulder while you're talking to them." },
+    { id: 'f_coworker_pat', dir: 'receive', who: 4, short: 'Coworker back pat',   q: 'A coworker gives you a quick pat on the back after a good meeting.' },
+    { id: 'f_first_hug',    dir: 'give',    who: 3, short: 'First to hug',        q: 'Being the first to go in for a hug when you see your friends.' },
+    { id: 'f_back_rub',     dir: 'give',    who: 2, short: 'Back rub for a friend', q: "Rubbing a close friend's back when they're stressed out." }
   ].map(o => ({ ...o, axis: 'touch', type: 'scale' }));
 
   // Order: sharing and touch alternate; touch alternates "who can" and "how do you feel".
