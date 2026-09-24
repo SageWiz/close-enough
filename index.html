@@ -419,8 +419,9 @@
 
 </div>
 
-<script src="config.js"></script>
-<script src="quiz-core.js"></script>
+<!-- bump ?v= whenever these files change, so browsers don't mix new and cached copies -->
+<script src="config.js?v=2"></script>
+<script src="quiz-core.js?v=2"></script>
 <script>
 (function(){
   const RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -429,7 +430,8 @@
   const CE = window.CloseEnough;
   const { GROUPS, DEFS, SCALE, RINGS, QUADS } = CE;
   // this run's question order: shuffled fresh every time the quiz starts
-  let QUESTIONS = CE.questionStack();
+  const newStack = () => CE.questionStack ? CE.questionStack() : CE.QUESTIONS.slice();
+  let QUESTIONS = newStack();
   const RADII = [26,53,80,107,134,161,188];   // you, then the six rings (in a 400 x 400 drawing)
   const CONFIG = window.CLOSE_ENOUGH_CONFIG || {};
   const API = CE.api(CONFIG);
@@ -607,7 +609,7 @@
   }
 
   function start(){
-    idx=0; QUESTIONS = CE.questionStack(); answers = new Array(QUESTIONS.length).fill(null);
+    idx=0; QUESTIONS = newStack(); answers = new Array(QUESTIONS.length).fill(null);
     startedAt=now(); shownAt=now(); qTime=new Array(QUESTIONS.length).fill(0); saved=false;
     if(consenting()) API.logEvent('start',{device:isPhone()?'mobile':'desktop', ref:REF}).catch(()=>{});
     show('quiz'); render(); $('prompt').focus({preventScroll:true});
