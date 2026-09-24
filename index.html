@@ -10,7 +10,7 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Close Enough">
 <meta property="og:description" content="How personal are you, and how touchy? 20 questions, a few minutes, and you end up as a dot on a chart.">
-<meta property="og:image" content="https://sagewiz.github.io/close-enough/og-image.png">
+<meta property="og:image" content="og-image.png">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='31' fill='%23edced8'/%3E%3Ccircle cx='32' cy='32' r='23' fill='%23e096ab'/%3E%3Ccircle cx='32' cy='32' r='15' fill='%23d56987'/%3E%3Ccircle cx='32' cy='32' r='7' fill='%23c8365f'/%3E%3C/svg%3E">
 <title>Close Enough: how personal and how touchy are you?</title>
@@ -58,7 +58,7 @@
   :focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:6px}
   [hidden]{display:none !important}
 
-  .wrap{max-width:980px;margin:0 auto;padding:24px clamp(18px,5vw,40px) 64px}
+  .wrap{max-width:1100px;margin:0 auto;padding:24px clamp(18px,5vw,40px) 64px}
   .topbar{display:flex;justify-content:space-between;align-items:center;min-height:40px;margin-bottom:clamp(24px,5vh,48px)}
   .brand{font-family:var(--display);font-weight:700;font-size:19px;letter-spacing:-.01em}
   .textbtn{background:none;border:none;color:var(--muted);font-size:15px;padding:6px 2px;text-decoration:underline;text-underline-offset:3px}
@@ -76,7 +76,7 @@
   .btn.secondary:hover{border-color:var(--ink)}
 
   /* intro */
-  .intro{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(24px,6vw,72px);align-items:center;min-height:62vh}
+  .intro{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:clamp(24px,6vw,80px);align-items:center;min-height:68vh}
   .intro h1{font-family:var(--display);font-weight:800;font-size:clamp(52px,9vw,104px);line-height:.92;letter-spacing:-.035em;font-variation-settings:"opsz" 96}
   .intro .lede{font-size:clamp(18px,2.2vw,21px);margin-top:24px;max-width:36ch}
   .intro .fine{color:var(--muted);font-size:15px;margin-top:14px;max-width:44ch}
@@ -90,10 +90,14 @@
   .privacy p{font-size:15px;margin-top:6px;color:var(--muted)}
   .stats-link{margin-top:18px;font-size:15px}
   .stats-link a{color:var(--ink);text-decoration:underline;text-underline-offset:3px}
-  .hero-rings{width:100%;max-width:460px;justify-self:center}
+  .hero-col{width:100%;max-width:540px;justify-self:center}
+  .ring-cap{min-height:3.6em;margin:16px auto 0;max-width:34ch;text-align:center;font-size:15px;color:var(--muted);line-height:1.45}
+  .ring-cap b{display:block;font-family:var(--display);font-weight:700;font-size:19px;color:var(--ink);letter-spacing:-.01em}
   @media (max-width:760px){
     .intro{grid-template-columns:1fr;min-height:0}
-    .hero-rings{order:-1;max-width:300px}
+    .hero-col{order:-1;max-width:340px}
+    .ring-cap{min-height:3.2em;font-size:14px}
+    .ring-cap b{font-size:17px}
   }
 
   dialog.legend{--mw:460px}
@@ -105,31 +109,36 @@
   .sw{width:14px;height:14px;border-radius:50%;flex:none}
 
   /* ring svg */
-  svg.rings circle{transition:fill .2s ease, stroke .2s ease}
-  svg.rings text{font-family:var(--body);font-size:9.5px;font-weight:700;text-anchor:middle;transition:fill .2s ease}
-  svg.rings .you{font-size:8.5px;fill:var(--on-accent)}
-  .hero-rings circle{animation:grow .7s cubic-bezier(.2,.8,.2,1) both;transform-box:fill-box;transform-origin:center}
-  .hero-rings text{animation:fade .5s ease both;animation-delay:.7s}
+  svg.rings{display:block;width:100%;height:auto;overflow:visible}
+  svg.rings .band{stroke-width:2.5;transition:fill .3s ease, stroke .3s ease;shape-rendering:geometricPrecision}
+  svg.rings .lbl{font-family:var(--body);font-size:13.5px;font-weight:700;letter-spacing:.015em;pointer-events:none;transition:fill .3s ease}
+  svg.rings .you{font-family:var(--body);font-size:13px;font-weight:700;fill:var(--on-accent);text-anchor:middle;pointer-events:none}
+  svg.rings [tabindex]{cursor:pointer;outline:none}
+  svg.rings .band:focus-visible{stroke:var(--ink);stroke-width:3}
+  /* the bloom: you first, then each ring opens outward */
+  svg.bloom .band, svg.bloom .core{animation:grow .8s cubic-bezier(.2,.8,.2,1) both;transform-box:fill-box;transform-origin:center}
+  svg.bloom .lbl, svg.bloom .you{animation:fade .5s ease both;animation-delay:.9s}
   @keyframes grow{from{transform:scale(.2);opacity:0}to{transform:scale(1);opacity:1}}
   @keyframes fade{from{opacity:0}to{opacity:1}}
 
   /* quiz */
-  .quiz,#quiz .topbar{max-width:760px;margin-left:auto;margin-right:auto}
+  .quiz,#quiz .topbar{max-width:1060px;margin-left:auto;margin-right:auto}
+  .qgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,380px);gap:clamp(32px,5vw,80px);align-items:start;margin-top:clamp(28px,5vh,48px)}
+  .qpanel{position:sticky;top:24px}
+  .qpanel .ring-cap{max-width:30ch}
+  @media (max-width:900px){
+    .qgrid{grid-template-columns:1fr}
+    .qpanel{display:none}
+  }
   .progress{display:flex;align-items:center;gap:14px;color:var(--muted);font-size:14px}
   .bar{flex:1;height:4px;background:var(--line);border-radius:2px;overflow:hidden}
   .bar i{display:block;height:100%;background:var(--accent);width:0;transition:width .3s ease}
-  .qbody{margin-top:clamp(28px,5vh,48px)}
+  .qbody{margin-top:0}
   .qbody.swap{animation:fade .25s ease}
   .kicker{color:var(--muted);font-size:15px}
   .prompt{font-family:var(--display);font-weight:700;font-size:clamp(26px,4.4vw,40px);line-height:1.1;letter-spacing:-.02em;margin-top:8px;max-width:24ch}
   .prompt:focus{outline:none}
   .answers{margin-top:28px;display:grid;gap:20px}
-  .answers.ring{grid-template-columns:minmax(0,1fr) clamp(100px,28vw,230px);align-items:start}
-  .qrings{position:sticky;top:20px}
-  @media (max-width:680px){
-    .answers.ring{grid-template-columns:1fr}
-    .qrings{display:none}
-  }
 
   .opts{display:grid;gap:8px}
   .opt{
@@ -273,7 +282,10 @@
           <button class="textbtn" id="privacyBtn" aria-haspopup="dialog" aria-controls="privacyDialog">What gets saved?</button>
         </div>
       </div>
-      <div class="hero-rings" id="heroRings"></div>
+      <div class="hero-col">
+        <div id="heroRings"></div>
+        <p class="ring-cap" id="heroCap"></p>
+      </div>
     </div>
 
     <dialog class="modal legend" id="ringsDialog" aria-labelledby="ringsTitle">
@@ -323,12 +335,20 @@
         <span id="progText">Question 1 of 20</span>
         <span class="bar" aria-hidden="true"><i id="progBar"></i></span>
       </div>
-      <div class="qbody" id="qbody">
-        <p class="kicker" id="kicker"></p>
-        <h2 class="prompt" id="prompt" tabindex="-1"></h2>
-        <div id="answers"></div>
+      <div class="qgrid">
+        <div class="qmain">
+          <div class="qbody" id="qbody">
+            <p class="kicker" id="kicker"></p>
+            <h2 class="prompt" id="prompt" tabindex="-1"></h2>
+            <div id="answers"></div>
+          </div>
+          <p class="keyhint">Tip: you can answer with the number keys.</p>
+        </div>
+        <aside class="qpanel" aria-hidden="true">
+          <div id="qRings"></div>
+          <p class="ring-cap" id="qCap"></p>
+        </aside>
       </div>
-      <p class="keyhint">Tip: you can answer with the number keys.</p>
     </div>
   </section>
 
@@ -406,7 +426,7 @@
   // questions, rings and scoring live in quiz-core.js (shared with the stats page)
   const CE = window.CloseEnough;
   const { GROUPS, DEFS, SCALE, RINGS, QUESTIONS, QUADS } = CE;
-  const RADII = [15,34,53,72,91,110,129];
+  const RADII = [26,53,80,107,134,161,188];   // you, then the six rings (in a 400 x 400 drawing)
   const CONFIG = window.CLOSE_ENOUGH_CONFIG || {};
   const API = CE.api(CONFIG);
 
@@ -430,35 +450,81 @@
   }
 
   /* ---------- rings ---------- */
+  let ringUid = 0;
+  const C = 200;
+  const circlePath = r => `M${C-r} ${C}a${r} ${r} 0 1 0 ${2*r} 0a${r} ${r} 0 1 0 ${-2*r} 0Z`;
+  // interactive: each ring can be hovered, tapped or focused; label: accessible name for the whole drawing
   function ringSvg(opts){
-    const cx=130, cy=130;
-    let s = `<svg class="rings" viewBox="0 0 260 260" ${opts.label ? `role="img" aria-label="${opts.label}"` : 'aria-hidden="true"'}>`;
-    for(let k=RINGS;k>=1;k--){
-      s += `<circle data-k="${k}" cx="${cx}" cy="${cy}" r="${RADII[k]}" style="stroke-width:1.5;animation-delay:${k*60}ms"/>`;
-    }
-    s += `<circle cx="${cx}" cy="${cy}" r="${RADII[0]}" style="fill:var(--accent);stroke:none"/>`;
-    s += `<text class="you" x="${cx}" y="${cy+3}">You</text>`;
+    const id = 'rg' + (++ringUid);
+    let defs='', bands='', labels='';
     for(let k=1;k<=RINGS;k++){
-      s += `<text data-k="${k}" x="${cx}" y="${cy - RADII[k] + 13}">${GROUPS[k]}</text>`;
+      const mid = (RADII[k-1]+RADII[k])/2, base = mid - 4.8;     // baseline sits so the text is centered in the band
+      defs += `<path id="${id}-${k}" d="M${C-base} ${C}A${base} ${base} 0 0 1 ${C+base} ${C}"/>`;
+      const a11y = opts.interactive ? ` tabindex="0" role="button" aria-label="${GROUPS[k]}: ${DEFS[k]}"` : '';
+      bands += `<path class="band" data-k="${k}" fill-rule="evenodd" d="${circlePath(RADII[k])}${circlePath(RADII[k-1])}" style="animation-delay:${k*85}ms"${a11y}/>`;
+      labels += `<text class="lbl" data-k="${k}" text-anchor="middle"><textPath href="#${id}-${k}" startOffset="50%">${GROUPS[k]}</textPath></text>`;
     }
-    return s + '</svg>';
+    const core = `<circle class="core" data-k="0" cx="${C}" cy="${C}" r="${RADII[0]}" style="fill:var(--accent)"${opts.interactive?' tabindex="0" role="button" aria-label="You, in the middle"':''}/>`;
+    const name = opts.label ? `role="group" aria-label="${opts.label}"` : 'aria-hidden="true"';
+    return `<svg class="rings${opts.bloom?' bloom':''}" viewBox="0 0 400 400" ${name}><defs>${defs}</defs>${bands}${core}${labels}<text class="you" x="${C}" y="${C+4.5}">You</text></svg>`;
   }
-  function setRings(svg, level, stagger){
+  // level: rings 1..level are filled. hl: one ring picked out in the accent color.
+  function setRings(svg, level, o){
     if(!svg) return;
-    svg.querySelectorAll('circle[data-k]').forEach(c=>{
-      const k = +c.dataset.k, on = k<=level;
-      c.style.transitionDelay = stagger ? `${(k-1)*55}ms` : '0ms';
-      c.style.fill = on ? tint(k) : 'var(--surface)';
-      c.style.stroke = on ? 'var(--surface)' : 'var(--line)';
+    o = o || {};
+    svg.querySelectorAll('.band').forEach(b=>{
+      const k=+b.dataset.k, on=k<=level, hl=k===o.hl;
+      b.style.transitionDelay = o.stagger ? `${(k-1)*60}ms` : '0ms';
+      b.style.fill = hl ? 'var(--accent)' : on ? tint(k) : 'var(--surface)';
+      b.style.stroke = (on||hl) ? 'var(--bg)' : 'var(--line)';
     });
-    svg.querySelectorAll('text[data-k]').forEach(t=>{
-      t.style.fill = (+t.dataset.k<=level) ? 'var(--ring-ink)' : 'var(--muted)';
+    svg.querySelectorAll('.lbl').forEach(t=>{
+      const k=+t.dataset.k;
+      t.style.transitionDelay = o.stagger ? `${(k-1)*60}ms` : '0ms';
+      t.style.fill = k===o.hl ? 'var(--on-accent)' : k<=level ? 'var(--ring-ink)' : 'var(--muted)';
     });
   }
 
+  // intro rings: bloom open, then hover / tap / focus a ring to see who's in it
   const hero = $('heroRings');
-  hero.innerHTML = ringSvg({label:'Concentric circles: you in the middle, then family, close friends, friends, coworkers, acquaintances and strangers'});
-  setRings(hero.querySelector('svg'), RINGS);
+  hero.innerHTML = ringSvg({ bloom:true, interactive:true, label:'The rings: you in the middle, then family, close friends, friends, coworkers, acquaintances and strangers. Select a ring to see who is in it.' });
+  const heroSvg = hero.querySelector('svg');
+  const canHover = window.matchMedia('(hover: hover)').matches;
+  const heroDefault = `<b>Who's in each ring?</b>${canHover ? 'Hover' : 'Tap'} a ring to find out.`;
+  function heroShow(k){
+    if(k===null){ setRings(heroSvg, RINGS); $('heroCap').innerHTML = heroDefault; return; }
+    setRings(heroSvg, RINGS, { hl:k });
+    $('heroCap').innerHTML = k===0 ? `<b>You</b>Right in the middle. Every ring out from here is a little further from you.` : `<b>${GROUPS[k]}</b>${DEFS[k]}`;
+  }
+  heroShow(null);
+  const ringOf = el => { const t = el && el.closest && el.closest('[data-k]'); return t ? +t.dataset.k : null; };
+  heroSvg.addEventListener('pointerover', e=>{ if(e.pointerType==='mouse'){ const k=ringOf(e.target); if(k!==null) heroShow(k); } });
+  heroSvg.addEventListener('pointerleave', e=>{ if(e.pointerType==='mouse' && !heroSvg.contains(document.activeElement)) heroShow(null); });
+  heroSvg.addEventListener('click', e=>{ const k=ringOf(e.target); if(k!==null) heroShow(k); });
+  heroSvg.addEventListener('focusin', e=>{ const k=ringOf(e.target); if(k!==null) heroShow(k); });
+  heroSvg.addEventListener('focusout', e=>{ if(!heroSvg.contains(e.relatedTarget)) heroShow(null); });
+  heroSvg.addEventListener('keydown', e=>{ if((e.key==='Enter'||e.key===' ') && ringOf(e.target)!==null){ e.preventDefault(); heroShow(ringOf(e.target)); } });
+  document.addEventListener('click', e=>{ if(!canHover && !heroSvg.contains(e.target)) heroShow(null); });
+
+  // question panel (computers): shows how far an answer reaches, or who a question is about
+  $('qRings').innerHTML = ringSvg({});
+  const qSvg = $('qRings').querySelector('svg');
+  const listOf = arr => arr.length<2 ? arr.join('') : arr.slice(0,-1).join(', ') + ' and ' + arr[arr.length-1];
+  function updatePanel(level, stagger){
+    const q = QUESTIONS[idx];
+    if(q.type==='ring'){
+      setRings(qSvg, level ?? 0, { stagger });
+      let cap;
+      if(level==null) cap = `<b>Pick a ring</b>Everyone inside the ring you pick counts too.`;
+      else if(level===0) cap = `<b>Just you</b>Nobody else gets this one.`;
+      else if(level===1) cap = `<b>Family</b>Just family.`;
+      else cap = `<b>Up to ${GROUPS[level].toLowerCase()}</b>Plus ${listOf(GROUPS.slice(1,level).map(g=>g.toLowerCase()))}.`;
+      $('qCap').innerHTML = cap;
+    } else {
+      setRings(qSvg, 0, { hl:q.who });
+      $('qCap').innerHTML = q.who ? `<b>This one's about: ${GROUPS[q.who].toLowerCase()}</b>${DEFS[q.who]}` : '';
+    }
+  }
 
   $('legendList').innerHTML = GROUPS.slice(1).map((g,i)=>
     `<div><dt><span class="sw" style="background:${tint(i+1)}"></span>${g}</dt><dd>${DEFS[i+1]}</dd></div>`
@@ -494,15 +560,13 @@
           <span class="txt"><span class="t">${g}</span><span class="h">${DEFS[i]}</span></span><kbd>${i+1}</kbd>${CHECK}</button>`;
       });
       opts += '</div><p class="ringnote">Picking a ring includes everyone inside it.</p></div>';
-      ans.innerHTML = opts + `<div class="qrings">${ringSvg({})}</div>`;
-      const svg = ans.querySelector('.qrings svg');
-      setRings(svg, current ?? 0);
+      ans.innerHTML = opts;
       ans.querySelectorAll('.opt').forEach(b=>{
         const v = +b.dataset.v;
-        b.addEventListener('mouseenter',()=>setRings(svg,v));
-        b.addEventListener('focus',()=>setRings(svg,v));
-        b.addEventListener('mouseleave',()=>setRings(svg, answers[idx] ?? 0));
-        b.addEventListener('blur',()=>setRings(svg, answers[idx] ?? 0));
+        b.addEventListener('mouseenter',()=>updatePanel(v));
+        b.addEventListener('focus',()=>updatePanel(v));
+        b.addEventListener('mouseleave',()=>updatePanel(answers[idx]));
+        b.addEventListener('blur',()=>updatePanel(answers[idx]));
       });
     } else {
       ans.className = 'answers';
@@ -513,6 +577,7 @@
       ans.innerHTML = opts + '</div>';
     }
     ans.querySelectorAll('.opt').forEach(b=>b.addEventListener('click',()=>choose(+b.dataset.v)));
+    updatePanel(current);
 
     shownAt = performance.now();   // per-question timer starts when the question is on screen
     const body = $('qbody');
@@ -525,7 +590,7 @@
     answers[idx] = v;
     $('answers').querySelectorAll('.opt').forEach(b=>b.setAttribute('aria-pressed', +b.dataset.v===v));
     const isRing = QUESTIONS[idx].type==='ring';
-    if(isRing) setRings($('answers').querySelector('.qrings svg'), v, true);
+    if(isRing) updatePanel(v, true);
     advancing = true;
     setTimeout(()=>{
       advancing = false;
