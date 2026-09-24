@@ -67,3 +67,22 @@ test('link tags are cleaned up, and anything odd is dropped', () => {
   assert.equal(CE.readRef('?ref=' + 'a'.repeat(31)), null);
   assert.equal(CE.readRef(''), null);
 });
+
+test('every shuffled stack has all 20 questions once, in the same rhythm', () => {
+  const defaultPattern = CE.QUESTIONS.map(q => q.axis + ':' + q.type);
+  const orders = new Set();
+  for (let run = 0; run < 200; run++) {
+    const stack = CE.questionStack();
+    assert.equal(stack.length, 20);
+    assert.equal(new Set(stack.map(q => q.id)).size, 20);
+    assert.deepEqual(stack.map(q => q.axis + ':' + q.type), defaultPattern);
+    orders.add(stack.map(q => q.id).join());
+  }
+  assert.ok(orders.size > 150, 'stacks should actually vary');
+});
+
+test('the order you answer in does not change your score', () => {
+  const byId = Object.fromEntries(CE.QUESTIONS.map((q, i) => [q.id, i % (q.type === 'ring' ? 7 : 5)]));
+  const shuffledEntries = Object.fromEntries(CE.questionStack().map(q => [q.id, byId[q.id]]));
+  assert.deepEqual(CE.score(shuffledEntries), CE.score(byId));
+});
