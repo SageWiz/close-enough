@@ -77,6 +77,7 @@ Only when the checkbox is checked:
 - when it was finished
 - the tag from the link they used, if it had one (see "Sharing links with tags")
 - whether it's their first time finishing on that device
+- the order the questions were shown in (it's shuffled for every run)
 - a few activity counts: quiz started, share window opened, picture downloaded (these give the finish rate)
 
 No names, emails, locations, cookies or accounts. To mark retakes, the browser keeps a count of how many times it has finished the quiz. That count stays on the person's device and never identifies them. Supabase keeps short-lived server logs like any web host.
@@ -131,6 +132,10 @@ Your notes from `commentary.md` show up in a "Notes" section near the top.
 
 **Want it private?** Delete the two "read" policies at the bottom of `schema.sql` (the comment there shows how), then view the data in Supabase's Table editor instead. The public stats page will stop loading.
 
+## Question order
+
+The questions are shuffled every time someone starts the quiz, so no two people get quite the same run. The shuffle keeps the rhythm (sharing, touch, sharing, touch, with the touch questions alternating between "who can" and "how do you feel"). The default order, used by the stats page, is in `quiz-core.js`. To turn shuffling off, find `newStack` in `index.html` and have it return `CE.QUESTIONS.slice()`.
+
 ## Changing the questions
 
 Questions live in `quiz-core.js`. Each one has an `id` (like `s_cry`) that the saved results use, so:
@@ -139,6 +144,8 @@ Questions live in `quiz-core.js`. Each one has an `id` (like `s_cry`) that the s
 - **Replacing** a question with a different one: give it a new `id`, and change `VERSION` at the top (for example from `v1` to `v2`), so old and new results can be told apart.
 
 Run `node --test` afterward to make sure the scoring still adds up.
+
+**When you update files on the live site,** bump the `?v=` number on the `config.js` and `quiz-core.js` lines near the bottom of `index.html` and `dashboard.html` (for example `?v=2` to `?v=3`). GitHub Pages lets browsers keep old copies for a few minutes, and the number makes them fetch the new ones together.
 
 ## Known limits
 
