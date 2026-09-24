@@ -427,7 +427,9 @@
 
   // questions, rings and scoring live in quiz-core.js (shared with the stats page)
   const CE = window.CloseEnough;
-  const { GROUPS, DEFS, SCALE, RINGS, QUESTIONS, QUADS } = CE;
+  const { GROUPS, DEFS, SCALE, RINGS, QUADS } = CE;
+  // this run's question order: shuffled fresh every time the quiz starts
+  let QUESTIONS = CE.questionStack();
   const RADII = [26,53,80,107,134,161,188];   // you, then the six rings (in a 400 x 400 drawing)
   const CONFIG = window.CLOSE_ENOUGH_CONFIG || {};
   const API = CE.api(CONFIG);
@@ -605,7 +607,7 @@
   }
 
   function start(){
-    idx=0; answers.fill(null);
+    idx=0; QUESTIONS = CE.questionStack(); answers = new Array(QUESTIONS.length).fill(null);
     startedAt=now(); shownAt=now(); qTime=new Array(QUESTIONS.length).fill(0); saved=false;
     if(consenting()) API.logEvent('start',{device:isPhone()?'mobile':'desktop', ref:REF}).catch(()=>{});
     show('quiz'); render(); $('prompt').focus({preventScroll:true});
@@ -659,6 +661,7 @@
       duration_ms: Math.min(Math.max(ms,1000),3600000),
       answers: answersById(),
       question_ms: Object.fromEntries(QUESTIONS.map((q,i)=>[q.id, Math.round(qTime[i]||0)])),
+      question_order: QUESTIONS.map(q=>q.id),
       personal: s.x, touchy: s.y, quadrant: key,
       receive: s.receive, give: s.give,
       device: isPhone() ? 'mobile' : 'desktop',

@@ -69,16 +69,37 @@
     { id: 'f_back_rub',     dir: 'give',    who: 2, short: 'Back rub for a friend', q: "Rubbing a close friend's back when they're stressed out." }
   ].map(o => ({ ...o, axis: 'touch', type: 'scale' }));
 
-  // Order: sharing and touch alternate; touch alternates "who can" and "how do you feel".
-  const touchOrder = [];
-  for (let i = 0; i < Math.max(TOUCH_WHO.length, TOUCH_FEEL.length); i++) {
-    if (TOUCH_WHO[i]) touchOrder.push(TOUCH_WHO[i]);
-    if (TOUCH_FEEL[i]) touchOrder.push(TOUCH_FEEL[i]);
+  // Rhythm: sharing and touch alternate, and touch alternates "who can" with "how do you feel".
+  function interleave(share, who, feel) {
+    const touch = [];
+    for (let i = 0; i < Math.max(who.length, feel.length); i++) {
+      if (who[i]) touch.push(who[i]);
+      if (feel[i]) touch.push(feel[i]);
+    }
+    const out = [];
+    for (let i = 0; i < Math.max(share.length, touch.length); i++) {
+      if (share[i]) out.push(share[i]);
+      if (touch[i]) out.push(touch[i]);
+    }
+    return out;
   }
-  const QUESTIONS = [];
-  for (let i = 0; i < SHARE.length; i++) {
-    QUESTIONS.push(SHARE[i]);
-    if (touchOrder[i]) QUESTIONS.push(touchOrder[i]);
+
+  // The default order (used by the stats page and anywhere a stable order is needed).
+  const QUESTIONS = interleave(SHARE, TOUCH_WHO, TOUCH_FEEL);
+
+  /**
+   * A fresh random order for one run of the quiz. Each pool is shuffled on its own and then
+   * put back into the same rhythm, so nobody gets five touch questions in a row.
+   * @param {() => number} [random] a 0..1 random source (Math.random by default)
+   */
+  function questionStack(random) {
+    const rnd = random || Math.random;
+    const shuffle = arr => {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+      return a;
+    };
+    return interleave(shuffle(SHARE), shuffle(TOUCH_WHO), shuffle(TOUCH_FEEL));
   }
 
   const QUADS = {
@@ -217,7 +238,7 @@
     } catch (e) { return null; }
   }
 
-  const CloseEnough = { VERSION, readRef, GROUPS, DEFS, RINGS, SCALE, SCALE_MAX, QUESTIONS, QUADS, score, quadrant, api };
+  const CloseEnough = { VERSION, readRef, GROUPS, DEFS, RINGS, SCALE, SCALE_MAX, QUESTIONS, questionStack, QUADS, score, quadrant, api };
 
   if (typeof module !== 'undefined' && module.exports) module.exports = CloseEnough;
   else root.CloseEnough = CloseEnough;
