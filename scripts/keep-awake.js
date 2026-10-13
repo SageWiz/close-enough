@@ -1,4 +1,4 @@
-// Pings the Supabase database so the free plan doesn't pause it for inactivity.
+// Writes to the Supabase database so the free plan doesn't pause it for inactivity.
 // Run by .github/workflows/keep-awake.yml. Reads the address and key from config.js,
 // so there's nothing extra to set up.
 const fs = require('fs');
@@ -18,14 +18,24 @@ if (!url || !key) {
 const headers = { apikey: key };
 if (/^eyJ/.test(key)) headers.Authorization = 'Bearer ' + key;
 
-fetch(`${url}/rest/v1/responses?select=created_at&order=created_at.desc&limit=1`, { headers })
+// Supabase only counts writes as activity, so call keep_awake(), which writes a row
+// and deletes it again (see supabase/schema.sql).
+fetch(`${url}/rest/v1/rpc/keep_awake`, {
+  method: 'POST',
+  headers: { ...headers, 'Content-Type': 'application/json' },
+  body: '{}',
+})
   .then(async r => {
     if (!r.ok) {
-      console.error(`Supabase answered ${r.status}. If the project is paused, restore it from the Supabase dashboard.`);
-      console.error(await r.text());
+      const body = await r.text();
+      if (r.status === 404 || /PGRST202/.test(body)) {
+        console.error('The keep_awake function is missing. Run supabase/schema.sql again in the Supabase SQL Editor.');
+      } else {
+        console.error(`Supabase answered ${r.status}. If the project is paused, restore it from the Supabase dashboard.`);
+      }
+      console.error(body);
       process.exit(1);
     }
-    const rows = await r.json();
-    console.log('Database is awake.', rows.length ? `Latest response: ${rows[0].created_at}` : 'No responses yet.');
+    console.log('Database is awake. Heartbeat written at', await r.json());
   })
   .catch(err => { console.error('Could not reach Supabase:', err.message); process.exit(1); });
