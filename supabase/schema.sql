@@ -64,5 +64,35 @@ grant select, insert on public.events    to anon;
 revoke update, delete, truncate on public.responses from anon;
 revoke update, delete, truncate on public.events    from anon;
 
+-- Keep-awake heartbeat: the GitHub Action calls keep_awake() every 3 days. It writes a row
+-- and deletes it again, because Supabase only counts writes as activity on the free plan.
+-- The public role can run the function but can't read or change the table directly.
+create table if not exists public.heartbeat (
+  id         bigint generated always as identity primary key,
+  pinged_at  timestamptz not null default now()
+);
+
+alter table public.heartbeat enable row level security;
+revoke all on public.heartbeat from anon;
+
+create or replace function public.keep_awake()
+returns timestamptz
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  new_id bigint;
+  stamp  timestamptz;
+begin
+  insert into public.heartbeat default values returning id, pinged_at into new_id, stamp;
+  delete from public.heartbeat where id = new_id;
+  return stamp;
+end;
+$$;
+
+revoke all on function public.keep_awake() from public;
+grant execute on function public.keep_awake() to anon;
+
 -- Want the stats page private instead? Drop the two "read" policies above and
 -- read the data from the Supabase dashboard (Table editor or SQL) instead.

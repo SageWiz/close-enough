@@ -18,7 +18,7 @@ A 20-question quiz about two things: how far your circle of closeness reaches, a
 | `config.js` | Where your database address and key go. Empty means the quiz works but saves nothing. |
 | `commentary.md` | Your notes. Whatever you write shows up on the stats page. |
 | `supabase/schema.sql` | Sets up the database tables. Run it once. |
-| `.github/workflows/keep-awake.yml` and `scripts/keep-awake.js` | Pings the database every 3 days so the free plan doesn't pause it |
+| `.github/workflows/keep-awake.yml` and `scripts/keep-awake.js` | Writes a heartbeat to the database every 3 days so the free plan doesn't pause it |
 | `tests/scoring.test.js` | Checks the scoring math. Run `node --test` from this folder. |
 | `METHODOLOGY.md` | The scoring, explained without code |
 | `og-image.png` | The preview picture when someone pastes the link into a chat |
