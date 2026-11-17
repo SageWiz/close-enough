@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Close Enough: the long version, so far</title>
+<meta name="description" content="Live results from the long version of Close Enough: where everyone landed, and how well the quiz is measuring.">
+<meta name="theme-color" content="#eceff1" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#15121a" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='31' fill='%23edced8'/%3E%3Ccircle cx='32' cy='32' r='23' fill='%23e096ab'/%3E%3Ccircle cx='32' cy='32' r='15' fill='%23d56987'/%3E%3Ccircle cx='32' cy='32' r='7' fill='%23c8365f'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#eceff1;--surface:#f8f9fa;--ink:#16191d;--muted:#565d67;--line:#cdd3d9;--track:#dde2e6;
+    --accent:#c8365f;--on-accent:#fff;--accent-deep:#8e2447;
+    --r1:#8e2447;--r2:#c8365f;--r3:#df6d8d;--r4:#eba0b5;--r5:#f2c6d2;--r6:#f7e1e7;--r0:#9aa2ab;
+    --s0:#9aa2ab;--s1:#f2c6d2;--s2:#e38aa4;--s3:#c8365f;--s4:#8e2447;
+    --display:'Bricolage Grotesque','Arial Narrow',system-ui,sans-serif;
+    --body:'Atkinson Hyperlegible',system-ui,-apple-system,'Segoe UI',sans-serif;
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --bg:#15121a;--surface:#1f1a25;--ink:#f3eef5;--muted:#aaa1b3;--line:#433b4e;--track:#352e3f;
+      --accent:#ff6f9a;--on-accent:#1c0a12;--accent-deep:#ffb3c9;
+      --r1:#ffc2d3;--r2:#ff8fb0;--r3:#e0507f;--r4:#a83a64;--r5:#74294a;--r6:#4d2036;--r0:#5b5366;
+      --s0:#5b5366;--s1:#4d2036;--s2:#a83a64;--s3:#ff6f9a;--s4:#ffc2d3;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#15121a;--surface:#1f1a25;--ink:#f3eef5;--muted:#aaa1b3;--line:#433b4e;--track:#352e3f;
+    --accent:#ff6f9a;--on-accent:#1c0a12;--accent-deep:#ffb3c9;
+    --r1:#ffc2d3;--r2:#ff8fb0;--r3:#e0507f;--r4:#a83a64;--r5:#74294a;--r6:#4d2036;--r0:#5b5366;
+    --s0:#5b5366;--s1:#4d2036;--s2:#a83a64;--s3:#ff6f9a;--s4:#ffc2d3;
+  }
+  html{scroll-padding-top:env(safe-area-inset-top,0px)}
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+  button,select{font:inherit;color:inherit}
+  a{color:inherit}
+  :focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:6px}
+  [hidden]{display:none !important}
+
+  .wrap{max-width:1120px;margin:0 auto;padding:24px clamp(18px,4vw,40px) 80px}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:700;font-size:19px;text-decoration:none}
+  .brand svg{width:26px;height:26px}
+  .take{font-size:15px;text-underline-offset:3px}
+
+  header.head{margin-top:clamp(28px,5vh,56px)}
+  header.head h1{font-family:var(--display);font-weight:800;font-size:clamp(36px,6vw,64px);line-height:.98;letter-spacing:-.03em}
+  header.head p{margin-top:10px;color:var(--muted);max-width:60ch}
+
+  .banner{margin-top:20px;padding:12px 16px;border-radius:10px;background:color-mix(in srgb,var(--accent) 12%,var(--surface));border:1px solid color-mix(in srgb,var(--accent) 40%,var(--line));font-size:15px}
+  .banner a{font-weight:700}
+
+  .filters{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin-top:28px;padding:14px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .filters label{display:inline-flex;align-items:center;gap:8px;font-size:14px;color:var(--muted)}
+  .filters select{background:var(--surface);border:1.5px solid var(--line);border-radius:8px;padding:6px 10px;color:var(--ink)}
+  .filters input[type=checkbox]{width:17px;height:17px;accent-color:var(--accent)}
+  .filters .spacer{flex:1}
+  .ghost{background:none;border:1.5px solid var(--line);border-radius:999px;padding:7px 16px;font-size:14px;font-weight:700;cursor:pointer}
+  .ghost:hover{border-color:var(--ink)}
+
+  .kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));margin-top:28px}
+  .kpi{padding:4px 20px;border-left:1px solid var(--line)}
+  .kpi:first-child{padding-left:0;border-left:none}
+  .kpi .v{font-family:var(--display);font-weight:800;font-size:clamp(28px,3.6vw,42px);letter-spacing:-.02em;line-height:1.05;font-variant-numeric:tabular-nums}
+  .kpi .l{font-size:14px;color:var(--muted)}
+  @media (max-width:760px){
+    .kpis{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 0}
+    .kpi{padding:0 16px}
+    .kpi:nth-child(odd){padding-left:0;border-left:none}
+  }
+
+  section.block{margin-top:56px}
+  section.block > h2{font-family:var(--display);font-weight:700;font-size:26px;letter-spacing:-.015em}
+  section.block > .sub{color:var(--muted);font-size:15px;margin-top:2px;max-width:70ch}
+  .two{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:clamp(24px,4vw,56px);margin-top:22px;align-items:start}
+  @media (max-width:860px){ .two{grid-template-columns:1fr} }
+  .three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(24px,3vw,40px);margin-top:22px}
+  @media (max-width:900px){ .three{grid-template-columns:1fr} }
+  h3{font-family:var(--display);font-weight:700;font-size:18px}
+  .note{font-size:14px;color:var(--muted)}
+
+  svg.chart{width:100%;height:auto;display:block}
+  svg.chart text{font-family:var(--body)}
+
+  .rows{list-style:none;display:grid;gap:10px;margin-top:12px}
+  .row{display:grid;grid-template-columns:12em minmax(0,1fr) 3.4em;gap:12px;align-items:center;font-size:15px}
+  .row b{text-align:right;font-variant-numeric:tabular-nums}
+  .track{display:block;height:9px;background:var(--track);border-radius:5px;overflow:hidden}
+  .track i{display:block;height:100%;background:var(--accent);border-radius:5px}
+  .track.deep i{background:var(--accent-deep)}
+
+  .callouts{list-style:none;display:grid;gap:14px;margin-top:14px}
+  .callouts li{padding-left:14px;border-left:3px solid var(--accent);font-size:15.5px}
+
+  table.rings{width:100%;table-layout:fixed;border-collapse:collapse;margin-top:12px;font-size:15px}
+  table.rings th{font-size:13px;color:var(--muted);text-align:left;padding-bottom:6px;font-weight:700}
+  table.rings th:first-child{width:34%}
+  table.rings td{padding:6px 0}
+  table.rings td + td, table.rings th + th{padding-left:14px}
+  table.rings .p{display:block;font-weight:700;font-size:14px;font-variant-numeric:tabular-nums}
+  table.rings tbody th{font-size:15px;font-weight:400;color:var(--ink);text-align:left}
+  table.src{max-width:820px}
+  table.src th:first-child{width:22%}
+  table.src td.n{font-weight:700;font-variant-numeric:tabular-nums}
+  table.src .count{font-size:12.5px;color:var(--muted);font-weight:400}
+
+  .qtools{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center;margin-top:16px}
+  .legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--muted)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .legend i{width:11px;height:11px;border-radius:3px;display:inline-block}
+  .qlist{list-style:none;margin-top:18px;display:grid;gap:4px}
+  .q{display:grid;grid-template-columns:minmax(0,14em) minmax(0,1fr) 7.5em 4.5em;gap:14px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+  .q .name{font-size:15px;line-height:1.3}
+  .q .name small{display:block;color:var(--muted);font-size:12.5px}
+  .q .stack{display:flex;height:18px;border-radius:5px;overflow:hidden;background:var(--track)}
+  .q .stack i{display:block;height:100%;box-shadow:inset -1px 0 0 var(--surface)}
+  .q .med,.q .sec{font-size:14px;text-align:right;font-variant-numeric:tabular-nums}
+  .q .med{font-weight:700}
+  .qhead{font-size:12.5px;color:var(--muted);font-weight:700;border-bottom:1px solid var(--line)}
+  .qhead .med,.qhead .sec{font-weight:700}
+  @media (max-width:700px){
+    .q{grid-template-columns:minmax(0,1fr) 7em 3.8em;gap:4px 10px}
+    .q .stack{grid-column:1 / -1;grid-row:2}
+    .qhead{display:none}
+  }
+
+  .commentary{margin-top:14px;max-width:70ch}
+  .commentary h3{margin-top:18px}
+  .commentary p{margin-top:8px}
+
+  .state{margin-top:40px;padding:28px;border:1.5px dashed var(--line);border-radius:12px;max-width:640px}
+  .state h2{font-family:var(--display);font-size:24px}
+  .state p{margin-top:8px;color:var(--muted)}
+  .state .ghost{margin-top:14px}
+  .skeleton{height:14px;border-radius:7px;background:var(--track);margin-top:10px;animation:pulse 1.2s ease-in-out infinite}
+  @keyframes pulse{50%{opacity:.45}}
+
+  /* long-version page */
+  .toplinks{display:flex;flex-wrap:wrap;gap:6px 20px}
+  header.head p a{font-weight:700}
+  table.quality{margin-top:16px}
+  table.quality th:first-child{width:32%}
+  table.quality thead th:nth-child(2){width:16%}
+  table.quality td.n{font-weight:700;font-variant-numeric:tabular-nums;font-size:16px;vertical-align:top;padding-top:9px}
+  table.quality tbody th, table.quality td{vertical-align:top;padding:9px 0;border-top:1px solid var(--line)}
+  table.quality td + td{padding-left:14px}
+  @media (max-width:700px){
+    table.quality thead{display:none}
+    table.quality, table.quality tbody, table.quality tr, table.quality th, table.quality td{display:block;width:auto !important}
+    table.quality tr{padding:12px 0;border-top:1px solid var(--line)}
+    table.quality tbody th, table.quality td{border:none;padding:0 !important}
+    table.quality td.n{font-size:20px;margin:2px 0}
+  }
+  .row.lad{grid-template-columns:12em minmax(0,1fr) 6.2em}
+  .row.lad b{font-weight:400;color:var(--muted);font-size:14px}
+  .defrows .row{grid-template-columns:minmax(0,15em) minmax(0,1fr) 3.4em}
+  .callouts li b{font-variant-numeric:tabular-nums}
+  .q.qd{grid-template-columns:minmax(0,14em) minmax(0,1fr) 6em 4.6em 4.5em}
+  @media (max-width:700px){
+    .row, .defrows .row, .row.lad{grid-template-columns:minmax(0,9.5em) minmax(0,1fr) 3.4em}
+    .row.lad{grid-template-columns:minmax(0,9.5em) minmax(0,1fr) 5.6em}
+    .q.qd{grid-template-columns:minmax(0,1fr) 5.4em 4.6em;gap:4px 10px}
+    .q.qd .stack{grid-column:1 / -1;grid-row:2}
+    .q.qd .sec:last-child{display:none}
+  }
+  @media (prefers-reduced-motion:reduce){ *{animation:none !important;transition:none !important} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <a class="brand" href="./"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="31" fill="var(--r6)"/><circle cx="32" cy="32" r="23" fill="var(--r4)"/><circle cx="32" cy="32" r="15" fill="var(--r2)"/><circle cx="32" cy="32" r="7" fill="var(--accent)"/></svg>Close Enough</a>
+    <span class="toplinks"><a class="take" href="dashboard.html">Quick version stats</a><a class="take" href="./?mode=deep">Take the long version</a></span>
+  </div>
+
+  <header class="head">
+    <h1>The long version, so far</h1>
+    <p id="headNote">Everyone who took the 52-question version and left "add my answers" checked. It's scored differently from the quick quiz, so the two don't share a page. <a href="METHODOLOGY-DEEP.md">How it's scored</a>.</p>
+  </header>
+  <p class="banner" id="demoBanner" hidden>You're looking at <b>made-up demo data</b> so you can see how this page works. Real results show up here once people take the long version.</p>
+
+  <div class="state" id="stateSetup" hidden>
+    <h2>Stats aren't connected yet</h2>
+    <p>Add your Supabase address and publishable key to <code>config.js</code>, then run <code>supabase/schema.sql</code>. The README walks through it.</p>
+    <a class="ghost" href="?demo=1" style="display:inline-block;text-decoration:none">Preview with demo data</a>
+  </div>
+  <div class="state" id="stateLoading" hidden aria-live="polite">
+    <h2>Loading results</h2>
+    <p id="loadingText">Fetching responses.</p>
+    <div class="skeleton" style="width:70%"></div><div class="skeleton" style="width:45%"></div>
+  </div>
+  <div class="state" id="stateError" hidden role="alert">
+    <h2>Couldn't load the results</h2>
+    <p id="errorText"></p>
+    <button class="ghost" id="retryBtn">Try again</button>
+  </div>
+  <div class="state" id="stateNone" hidden>
+    <h2>Nobody has finished the long version yet</h2>
+    <p>Results show up here as soon as the first person does.</p>
+    <a class="ghost" href="?demo=1" style="display:inline-block;text-decoration:none">Preview with demo data</a>
+  </div>
+
+  <main id="dash" hidden>
+    <div class="filters">
+      <label>Time
+        <select id="fRange">
+          <option value="all">All time</option>
+          <option value="90">Last 90 days</option>
+          <option value="30">Last 30 days</option>
+          <option value="7">Last 7 days</option>
+        </select>
+      </label>
+      <label>Device
+        <select id="fDevice">
+          <option value="all">Phones and computers</option>
+          <option value="mobile">Phones</option>
+          <option value="desktop">Computers</option>
+        </select>
+      </label>
+      <label>Source
+        <select id="fRef"><option value="all">All links</option></select>
+      </label>
+      <label><input type="checkbox" id="fFirst" checked> First tries only</label>
+      <label><input type="checkbox" id="fFlagged" checked> Hide flagged runs</label>
+      <span class="spacer"></span>
+      <button class="ghost" id="csvBtn">Download CSV</button>
+    </div>
+
+    <p class="state" id="stateEmpty" hidden>No responses match these filters yet.</p>
+
+    <div id="content">
+      <div class="kpis">
+        <div class="kpi"><div class="v" id="kN"></div><div class="l">responses</div></div>
+        <div class="kpi"><div class="v" id="kFinish"></div><div class="l">of starts finished</div></div>
+        <div class="kpi"><div class="v" id="kTime"></div><div class="l">median time</div></div>
+        <div class="kpi"><div class="v" id="kX"></div><div class="l">typical how personal</div></div>
+        <div class="kpi"><div class="v" id="kY"></div><div class="l">typical how touchy</div></div>
+      </div>
+
+      <section class="block">
+        <h2>Where everyone landed</h2>
+        <p class="sub" id="scatterSub"></p>
+        <div class="two">
+          <div id="scatter"></div>
+          <div>
+            <h3>By result</h3>
+            <ul class="rows" id="quadRows"></ul>
+            <h3 style="margin-top:32px">How the scores spread out</h3>
+            <p class="note">If the quiz is measuring well, these look like hills, not a pile against one wall.</p>
+            <div id="histX" style="margin-top:10px"></div>
+            <div id="histY" style="margin-top:14px"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="block">
+        <h2>Is the quiz any good?</h2>
+        <p class="sub">The checks a survey gets before anyone trusts its numbers. These firm up as more people take it.</p>
+        <p class="note" id="qualityWait" style="margin-top:14px" hidden></p>
+        <table class="rings quality" id="qualityTable">
+          <thead><tr><th scope="col">Check</th><th scope="col">Result</th><th scope="col">What it means</th></tr></thead>
+          <tbody id="qualityRows"></tbody>
+        </table>
+      </section>
+
+      <section class="block" id="commentaryBlock" hidden>
+        <h2>Notes</h2>
+        <div class="commentary" id="commentary"></div>
+      </section>
+
+      <section class="block">
+        <h2>How people set up their rings</h2>
+        <p class="sub" id="ringSub"></p>
+        <div class="two">
+          <div>
+            <h3>Where each group usually lands</h3>
+            <p class="note">Average spot, from 1 (closest) to 5.</p>
+            <ul class="rows" id="posRows"></ul>
+            <h3 style="margin-top:28px">Most common orders</h3>
+            <ul class="callouts" id="orderRows"></ul>
+          </div>
+          <div id="defs"></div>
+        </div>
+      </section>
+
+      <section class="block">
+        <h2>The touch ladder</h2>
+        <p class="sub">How close each kind of touch feels, on average, whoever it's with. These ratings are what weight each person's touchy score.</p>
+        <div class="two">
+          <ul class="rows" id="ladderRows" style="margin-top:0"></ul>
+          <div>
+            <h3>Touch, both ways</h3>
+            <ul class="rows" id="dirRows"></ul>
+            <p class="note" id="shiftNote" style="margin-top:14px"></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="block">
+        <h2>Question by question</h2>
+        <p class="sub">The 32 scored questions. "Pull" is how well a question tracks the rest of its side of the quiz: higher is better, and anything under 0.20 isn't adding much.</p>
+        <div class="qtools">
+          <label class="note">Sort by
+            <select id="qSort" style="margin-left:6px;background:var(--surface);border:1.5px solid var(--line);border-radius:8px;padding:5px 8px;color:var(--ink)">
+              <option value="order">Default order</option>
+              <option value="open">Most open first</option>
+              <option value="guarded">Most guarded first</option>
+              <option value="split">Most split first</option>
+              <option value="weak">Weakest pull first</option>
+              <option value="slow">Slowest first</option>
+            </select>
+          </label>
+          <div class="legend" id="ringLegend"></div>
+          <div class="legend" id="scaleLegend"></div>
+        </div>
+        <ul class="qlist" id="qlist"></ul>
+      </section>
+
+      <section class="block">
+        <h2>By age and gender</h2>
+        <p class="sub">Both questions are optional. A group only shows up once at least 5 people are in it, and these two answers are never shown next to anyone's individual results. First tries without flags, all time: the filters above don't apply here.</p>
+        <div id="demoState" class="note" style="margin-top:14px"></div>
+        <div class="two" id="demoGrid" hidden>
+          <div><h3>Age</h3><table class="rings"><thead><tr><th scope="col">Group</th><th scope="col">How personal</th><th scope="col">How touchy</th></tr></thead><tbody id="ageRows"></tbody></table></div>
+          <div><h3>Gender</h3><table class="rings"><thead><tr><th scope="col">Group</th><th scope="col">How personal</th><th scope="col">How touchy</th></tr></thead><tbody id="genderRows"></tbody></table></div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<script src="config.js?v=2"></script>
+<script src="quiz-core.js?v=3"></script>
+<script src="deep-core.js?v=1"></script>
+<script>
+(function(){
+  const CE = window.CloseEnough, DEEP = window.CloseEnoughDeep;
+  const { QUADS, SCALE } = CE;
+  const S = DEEP.stats;
+  const CONFIG = window.CLOSE_ENOUGH_CONFIG || {};
+  const API = DEEP.api(CONFIG);
+  const DEMO = new URLSearchParams(location.search).has('demo');
+  const $ = id => document.getElementById(id);
+  const LEVELS = ['Nobody', '1st ring', '2nd ring', '3rd ring', '4th ring', '5th ring', 'Strangers'];
+  const MIN_QUALITY = 10;       // people needed before the measurement checks mean anything
+  const SHARE = DEEP.SCORED.filter(q => q.axis==='share'), TOUCH = DEEP.SCORED.filter(q => q.axis==='touch');
+
+  let ALL = [], starts = null, demographics = null;
+
+  const { mean, median, sd } = S;
+  const fmtN = n => n.toLocaleString();
+  const fmtTime = ms => { const s=Math.round(ms/1000); return `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`; };
+  const esc = s => String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const bar = (v, cls) => `<span class="track ${cls||''}" aria-hidden="true"><i style="width:${Math.max(0,Math.min(100,v))}%"></i></span>`;
+  const show = id => ['stateSetup','stateLoading','stateError','stateNone','dash'].forEach(s => $(s).hidden = s!==id);
+  const r2 = v => v==null ? '–' : (Math.round(v*100)/100).toFixed(2);
+
+  /* ---------- demo data (clearly labeled, never mixed with real data) ---------- */
+  function demoRows(n){
+    let seed = 11;
+    const rnd = () => (seed = (seed*16807) % 2147483647) / 2147483647;
+    const gauss = () => { let u=0; for(let i=0;i<6;i++) u+=rnd(); return (u-3)/1.2; };
+    const clamp = (v,a,b) => Math.max(a,Math.min(b,v));
+    const ease = { surface:.28, personal:-.02, deep:-.14 };
+    const rung = { shake:.4, pat:1.1, arm:1.5, hug:2.2, kiss:2.4, hands:3.1, head:3.0, hair:3.3, rub:3.2 };
+    const bias = Object.fromEntries(DEEP.SCORED.map(q=>[q.id, gauss()*0.07 + (q.axis==='share' ? ease[q.tier] : (2.2-rung[q.touch])*0.1)]));
+    const rows = [], nowMs = Date.now(), days = 40;
+    for(let i=0;i<n;i++){
+      const created = new Date(nowMs - (1-Math.pow(rnd(), .6))*days*864e5);
+      const p = clamp(.36 + gauss()*.15, .03, .97), t = clamp(.42 + (p-.36)*.3 + gauss()*.16, .03, .97);
+      const sloppy = rnd() < .07;
+      const order = [1,2,3,4,5];
+      if(rnd()<.24) [order[0],order[1]] = [order[1],order[0]];
+      if(rnd()<.10) [order[3],order[4]] = [order[4],order[3]];
+      const answers = {}, qms = {}, pace = Math.exp(gauss()*0.35);
+      const lvl = q => clamp((q.axis==='share'?p:t) + bias[q.id] + gauss()*(sloppy?.4:.13), 0, 1);
+      DEEP.SCORED.forEach(q => { answers[q.id] = Math.round(lvl(q) * DEEP.maxOf(q)); });
+      DEEP.LADDER.forEach(q => { answers[q.id] = clamp(Math.round(rung[q.touch] + gauss()*.8), 0, 4); });
+      DEEP.TWINS.forEach(tw => { answers[tw.id] = clamp(answers[tw.twinOf] + Math.round(gauss()*(sloppy?2.2:.5)), 0, 6); });
+      answers.k_attention = sloppy && rnd()<.6 ? Math.floor(rnd()*7) : DEEP.posOf(order, 3);
+      const pick = w => { let r=rnd(), i=0; while(i<w.length-1 && (r-=w[i])>0) i++; return i; };
+      answers.c_family_def = pick([.42,.2,.12,.26]); answers.c_partner = pick([.38,.22,.1,.3]);
+      answers.c_close_count = pick([.04,.3,.44,.17,.05]); answers.c_work_friend = pick([.12,.4,.36,.12]); answers.c_friend_line = pick([.24,.38,.1,.28]);
+      const carried = rnd() < .45;
+      const order_ids = DEEP.stack({ carried, random: rnd }).map(q=>q.id);
+      order_ids.forEach(id => { qms[id] = Math.round(clamp((2400 + gauss()*1200 + DEEP.BY_ID[id].q.length*32)*pace*(sloppy?.4:1), 500, 30000)); });
+      const s = DEEP.score({ ...answers, c_rank: order });
+      const rr = rnd(), ref = rr<.4 ? 'instagram' : rr<.6 ? 'linkedin' : null;
+      rows.push({ created_at: created.toISOString(), quiz_version: DEEP.VERSION, duration_ms: Object.values(qms).reduce((a,b)=>a+b,0) + Math.round(rnd()*9000),
+        answers, question_ms: qms, question_order: order_ids, ring_order: order, carried,
+        personal: s.x, touchy: s.y, touchy_raw: s.yRaw, short_personal: s.short.x, short_touchy: s.short.y, quadrant: s.quadrant,
+        consistency: s.consistency, flags: s.flags, device: rnd()<.7 ? 'mobile' : 'desktop', ref, attempt: rnd()<.06 ? 2 : 1 });
+    }
+    return rows;
+  }
+  const DEMO_GROUPS = [
+    ['age','18-24',31,41.2,49.8],['age','25-34',74,37.9,45.1],['age','35-44',38,35.0,41.7],['age','45-54',12,33.4,38.9],
+    ['gender','woman',88,36.1,47.3],['gender','man',64,38.8,40.6],['gender','nonbinary',6,39.5,44.0]
+  ].map(([dimension,grp,n,personal,touchy])=>({dimension,grp,n,personal,touchy}));
+
+  /* ---------- load ---------- */
+  function enrich(rows){
+    return rows.map(r=>{
+      let s = null;
+      try{ s = DEEP.score({ ...(r.answers||{}), c_rank: r.ring_order }); }catch(e){ /* partial row: kept for the headline numbers only */ }
+      const asked = Array.isArray(r.question_order) && r.question_order.length ? r.question_order.length : DEEP.ALL.length;
+      const flags = [...(s ? s.flags : (Array.isArray(r.flags) ? r.flags : []))];
+      if(DEEP.isRushed(r.duration_ms, asked)) flags.push('rushed');
+      return { ...r, t: new Date(r.created_at).getTime(), s, x: s ? s.x : r.personal, y: s ? s.y : r.touchy, allFlags: flags };
+    });
+  }
+
+  async function load(){
+    if(DEMO){
+      $('demoBanner').hidden = false;
+      ALL = enrich(demoRows(180)).sort((a,b)=>a.t-b.t);
+      starts = { demo: true }; demographics = { rows: DEMO_GROUPS };
+      fillSources(); show('dash'); renderAll(); return;
+    }
+    if(!API.enabled){ show('stateSetup'); return; }
+    show('stateLoading');
+    try{
+      const rows = await API.allResponses(n => $('loadingText').textContent = `${fmtN(n)} responses so far.`);
+      if(!rows.length){ show('stateNone'); return; }
+      ALL = enrich(rows);
+      fillSources(); show('dash'); renderAll();
+      loadCommentary();
+      API.demographics().then(rows => { demographics = { rows }; }).catch(() => { demographics = { error: true }; }).then(renderDemographics);
+    }catch(e){
+      $('errorText').textContent = `${e.message}. Check the address and key in config.js, and that the latest supabase/schema.sql was run (the long version needs its own table).`;
+      show('stateError');
+    }
+  }
+  $('retryBtn').addEventListener('click', load);
+
+  async function loadCommentary(){
+    try{
+      const r = await fetch('commentary-deep.md', {cache:'no-store'});
+      if(!r.ok) return;
+      const md = (await r.text()).replace(/<!--[\s\S]*?-->/g,'').trim();
+      if(!md) return;
+      $('commentary').innerHTML = md.split(/\n{2,}/).map(par=>{
+        const t = par.trim();
+        if(t.startsWith('## ')) return `<h3>${esc(t.slice(3))}</h3>`;
+        if(t.startsWith('# ')) return `<h3>${esc(t.slice(2))}</h3>`;
+        return `<p>${esc(t).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\*(.+?)\*/g,'<i>$1</i>').replace(/\n/g,'<br>')}</p>`;
+      }).join('');
+      $('commentaryBlock').hidden = false;
+    }catch(e){}
+  }
+
+  function fillSources(){
+    const counts = new Map();
+    ALL.forEach(r => counts.set(r.ref || null, (counts.get(r.ref || null) || 0) + 1));
+    const tags = [...counts.entries()].filter(([k])=>k).sort((a,b)=>b[1]-a[1]).map(([k])=>k);
+    $('fRef').innerHTML = '<option value="all">All links</option>' +
+      tags.map(t=>`<option value="${esc(t)}">${esc(t)}</option>`).join('') +
+      (counts.has(null) && tags.length ? '<option value="none">No tag</option>' : '');
+    $('fRef').closest('label').hidden = tags.length===0;
+  }
+
+  /* ---------- filtering ---------- */
+  const refMatch = (r, ref) => ref==='all' || (ref==='none' ? !r.ref : r.ref===ref);
+  function inScope(r){
+    const range = $('fRange').value, dev = $('fDevice').value;
+    const since = range==='all' ? 0 : Date.now() - (+range)*864e5;
+    return r.t >= since && (dev==='all' || r.device===dev) && refMatch(r, $('fRef').value);
+  }
+  const firstOnly = r => !$('fFirst').checked || (r.attempt||1)===1;
+  const filtered = () => ALL.filter(r => inScope(r) && firstOnly(r) && (!$('fFlagged').checked || !r.allFlags.length));
+  ['fRange','fDevice','fRef','fFirst','fFlagged'].forEach(id => $(id).addEventListener('change', renderAll));
+  $('qSort').addEventListener('change', () => renderQuestions(filtered()));
+
+  async function finishRate(rows){
+    if(!rows.length) return '–';
+    if(starts && starts.demo) return '64%';
+    try{
+      const range = $('fRange').value;
+      const since = range==='all' ? null : new Date(Date.now() - (+range)*864e5).toISOString();
+      const n = await API.countStarts({ since, device: $('fDevice').value, ref: $('fRef').value });
+      const finishes = ALL.filter(inScope).length;
+      return n ? Math.min(100, Math.round(finishes/n*100)) + '%' : '–';
+    }catch(e){ return '–'; }
+  }
+
+  /* ---------- render ---------- */
+  function renderAll(){
+    const rows = filtered();
+    $('stateEmpty').hidden = rows.length>0;
+    $('content').hidden = rows.length===0;
+    if(!rows.length) return;
+    const norms = DEEP.norms(rows.map(r=>({ personal:r.x, touchy:r.y })));
+    const centers = norms.ready ? norms.centers : { x:50, y:50 };
+
+    $('kN').textContent = fmtN(rows.length);
+    $('kTime').textContent = fmtTime(median(rows.map(r=>r.duration_ms)));
+    $('kX').textContent = Math.round(median(rows.map(r=>r.x))) + '%';
+    $('kY').textContent = Math.round(median(rows.map(r=>r.y))) + '%';
+    $('kFinish').textContent = '…';
+    finishRate(rows).then(v => $('kFinish').textContent = v);
+
+    renderScatter(rows, centers, norms);
+    renderHist('histX', rows.map(r=>r.x), 'How personal');
+    renderHist('histY', rows.map(r=>r.y), 'How touchy');
+    renderQuality(rows);
+    renderRingSetup(rows);
+    renderLadder(rows);
+    renderQuestions(rows);
+    renderDemographics();
+  }
+
+  function renderScatter(rows, c, norms){
+    const L=52,R=392,T=16,B=356,W=R-L,H=B-T;
+    const op = Math.max(.14, Math.min(.7, 6/Math.sqrt(rows.length)));
+    const jit = () => (Math.random()-.5)*4;
+    const dots = rows.map(r=>`<circle cx="${(L+r.x/100*W+jit()).toFixed(1)}" cy="${(B-r.y/100*H+jit()).toFixed(1)}" r="3.6" style="fill:var(--accent);opacity:${op.toFixed(2)}"/>`).join('');
+    const cx = L+c.x/100*W, cy = B-c.y/100*H;
+    const q = (k,x,y,a) => `<text x="${x}" y="${y}" text-anchor="${a}" style="font-size:12.5px;fill:var(--muted)">${QUADS[k].short}</text>`;
+    $('scatterSub').textContent = norms.ready
+      ? `Each dot is one person. The dashed lines cross at the typical person (${c.x}% personal, ${c.y}% touchy), and results are counted from there.`
+      : `Each dot is one person. The dashed lines sit at 50 until ${DEEP.MIN_NORM} people are in (${norms.n} so far). After that they move to the typical person.`;
+    $('scatter').innerHTML = `<svg class="chart" viewBox="0 0 400 410" role="img" aria-label="Scatter plot of ${rows.length} long-version results. Typical: how personal ${Math.round(median(rows.map(r=>r.x)))} percent, how touchy ${Math.round(median(rows.map(r=>r.y)))} percent.">
+      <rect x="${L}" y="${T}" width="${W}" height="${H}" rx="6" style="fill:var(--surface);stroke:var(--line)"/>
+      <line x1="${cx}" y1="${T}" x2="${cx}" y2="${B}" style="stroke:var(--muted);stroke-dasharray:4 5"/>
+      <line x1="${L}" y1="${cy}" x2="${R}" y2="${cy}" style="stroke:var(--muted);stroke-dasharray:4 5"/>
+      ${dots}
+      ${q('warm',L+10,T+18,'start')}${q('hugger',R-10,T+18,'end')}${q('vault',L+10,B-10,'start')}${q('open',R-10,B-10,'end')}
+      <text x="${L}" y="${B+20}" style="font-size:12px;fill:var(--muted)">Inner circle only</text>
+      <text x="${R}" y="${B+20}" text-anchor="end" style="font-size:12px;fill:var(--muted)">Anyone</text>
+      <text x="${L+W/2}" y="${B+42}" text-anchor="middle" style="font-size:13px;font-weight:700;fill:var(--ink)">How personal</text>
+      <text transform="translate(${L-12} ${B}) rotate(-90)" style="font-size:12px;fill:var(--muted)">Hands off</text>
+      <text transform="translate(${L-12} ${T}) rotate(-90)" text-anchor="end" style="font-size:12px;fill:var(--muted)">Touchy</text>
+      <text transform="translate(${L-32} ${T+H/2}) rotate(-90)" text-anchor="middle" style="font-size:13px;font-weight:700;fill:var(--ink)">How touchy</text>
+    </svg>`;
+    $('quadRows').innerHTML = ['hugger','open','warm','vault','middle'].map(k=>{
+      const v = Math.round(rows.filter(r=>DEEP.quadrant(r.x, r.y, c)===k).length/rows.length*100);
+      return `<li class="row"><span>${QUADS[k].name}</span>${bar(v)}<b>${v}%</b></li>`;
+    }).join('');
+  }
+
+  function renderHist(id, vals, label){
+    const bins = new Array(10).fill(0);
+    vals.forEach(v => bins[Math.min(9, Math.floor(v/10))]++);
+    const Wd=360, H=70, L=4, T=4, B=T+H, bw=(Wd-L*2)/10, mx=Math.max(1,...bins);
+    const sk = S.skew(vals);
+    const lean = vals.length<10 ? '' : Math.abs(sk)<.5 ? 'Fairly even.' : sk>0 ? (sk>1 ? 'Piled up at the low end.' : 'Leans low.') : (sk<-1 ? 'Piled up at the high end.' : 'Leans high.');
+    $(id).innerHTML = `<p class="note" style="color:var(--ink)"><b>${label}</b> ${vals.length<10 ? '' : `Skew ${r2(sk)}. ${lean}`}</p>
+      <svg class="chart" viewBox="0 0 ${Wd} ${B+18}" role="img" aria-label="${label}: how many people scored in each tenth of the scale. ${lean}">
+      ${bins.map((c,i)=>{ const h=c/mx*H; return `<rect x="${(L+i*bw+1).toFixed(1)}" y="${(B-h).toFixed(1)}" width="${(bw-2).toFixed(1)}" height="${h.toFixed(1)}" rx="2" style="fill:var(--accent)"><title>${i*10} to ${i*10+10}: ${c}</title></rect>`; }).join('')}
+      <line x1="${L}" y1="${B}" x2="${Wd-L}" y2="${B}" style="stroke:var(--line)"/>
+      <text x="${L}" y="${B+14}" style="font-size:11px;fill:var(--muted)">0</text>
+      <text x="${Wd/2}" y="${B+14}" text-anchor="middle" style="font-size:11px;fill:var(--muted)">50</text>
+      <text x="${Wd-L}" y="${B+14}" text-anchor="end" style="font-size:11px;fill:var(--muted)">100</text>
+    </svg>`;
+  }
+
+  const matrix = (rows, qs) => rows.map(r => qs.map(q => r.answers[q.id] / DEEP.maxOf(q)));
+  const alphaWord = a => a==null ? 'Not enough spread to tell yet.' : a>=.9 ? 'Very high. The questions agree so much that a few may be repeating each other.'
+    : a>=.8 ? 'Good. The questions are clearly measuring one thing.' : a>=.7 ? 'Fine for a quiz like this.'
+    : a>=.6 ? 'Shaky. Some questions are off doing their own thing.' : 'Weak. This side isn\'t one clean scale yet.';
+  const rWord = r => r==null ? 'Not enough spread to tell yet.' : r>=.7 ? 'Strong agreement.' : r>=.5 ? 'Solid agreement.' : r>=.3 ? 'Loose agreement.' : 'They barely agree.';
+
+  function renderQuality(rows){
+    const sc = rows.filter(r=>r.s);
+    const wait = sc.length < MIN_QUALITY;
+    $('qualityWait').hidden = !wait; $('qualityTable').hidden = wait;
+    if(wait){ $('qualityWait').textContent = `These need at least ${MIN_QUALITY} responses to mean anything. There ${sc.length===1?'is':'are'} ${sc.length} so far.`; return; }
+
+    const mX = matrix(sc, SHARE), mY = matrix(sc, TOUCH);
+    const aX = S.alpha(mX), aY = S.alpha(mY);
+    const sem = (vals, a) => a==null ? null : sd(vals) * Math.sqrt(Math.max(0, 1-a));
+    const part = (r, qs) => mean(qs.map(q => r.answers[q.id] / DEEP.maxOf(q)));
+    const oldNew = qs => S.pearson(sc.map(r=>part(r, qs.filter(q=>q.original))), sc.map(r=>part(r, qs.filter(q=>!q.original))));
+    const rXY = S.pearson(sc.map(r=>r.x), sc.map(r=>r.y));
+    // the three checks below are counted before the "hide flagged" filter, or they'd always read perfect
+    const scope = ALL.filter(r => inScope(r) && firstOnly(r));
+    const twins = scope.filter(r=>r.s && r.s.twinDiffs.length);
+    const matched = twins.length ? Math.round(twins.filter(r=>Math.max(...r.s.twinDiffs)<=1).length/twins.length*100) : null;
+    const att = scope.filter(r=>r.s && r.s.attention!==null);
+    const passed = att.length ? Math.round(att.filter(r=>r.s.attention).length/att.length*100) : null;
+    const flagged = scope.filter(r=>r.allFlags.length);
+    const why = k => flagged.filter(r=>r.allFlags.includes(k)).length;
+    const semX = sem(sc.map(r=>r.x), aX), semY = sem(sc.map(r=>r.y), aY);
+
+    const out = [
+      ['How personal: do the questions hang together?', r2(aX), `Cronbach's alpha, 16 questions. ${alphaWord(aX)}`],
+      ['How touchy: do the questions hang together?', r2(aY), `Cronbach's alpha, 16 questions. ${alphaWord(aY)}`],
+      ['Margin on a score', semX==null||semY==null ? '–' : `±${Math.round(semX)} and ±${Math.round(semY)}`, 'Points of wobble on how personal and how touchy. Two people closer together than this are basically tied.'],
+      ['Old questions vs new ones, sharing', r2(oldNew(SHARE)), `Do the 10 quick-quiz questions and the 6 new ones rank people the same way? ${rWord(oldNew(SHARE))}`],
+      ['Old questions vs new ones, touch', r2(oldNew(TOUCH)), `Same check for touch. ${rWord(oldNew(TOUCH))}`],
+      ['Personal vs touchy', r2(rXY), rXY==null ? '' : Math.abs(rXY)<.3 ? 'Nearly unrelated, so the chart really has two separate axes.' : Math.abs(rXY)<.6 ? 'Related, but each axis still says something the other doesn\'t.' : 'Strongly tied. The two axes are close to measuring one thing.'],
+      ['Repeated questions matched', matched==null ? '–' : matched+'%', 'Two questions get asked twice in different words. This is the share of people who answered both within one ring. Flagged runs included.'],
+      ['Attention check passed', passed==null ? '–' : passed+'%', 'One question tells people exactly what to pick. Flagged runs included.'],
+      ['Runs flagged', scope.length ? Math.round(flagged.length/scope.length*100)+'%' : '–',
+        flagged.length ? `${fmtN(flagged.length)} of ${fmtN(scope.length)}: ${[['attention','missed the attention check'],['inconsistent','repeats didn\'t match'],['same_answer','same answer nearly every time'],['anchors','easy and hard questions flipped'],['rushed','too fast to have read it']].filter(([k])=>why(k)).map(([k,l])=>`${why(k)} ${l}`).join(', ')}. A run can have more than one.` : 'None so far.']
+    ];
+    $('qualityRows').innerHTML = out.map(([a,b,c])=>`<tr><th scope="row" style="font-weight:400;color:var(--ink)">${a}</th><td class="n">${b}</td><td class="note">${c}</td></tr>`).join('');
+  }
+
+  function renderRingSetup(rows){
+    const withOrder = rows.filter(r=>DEEP.validOrder(r.ring_order));
+    if(!withOrder.length){ $('ringSub').textContent = ''; return; }
+    const usual = Math.round(withOrder.filter(r=>DEEP.isStandard(r.ring_order)).length/withOrder.length*100);
+    $('ringSub').textContent = `${usual}% kept the order the quick quiz assumes (family, close friends, friends, coworkers, acquaintances). The other ${100-usual}% are the people the quick quiz reads a little wrong.`;
+    const pos = DEEP.STANDARD_ORDER.map(g => ({ g, avg: mean(withOrder.map(r=>DEEP.posOf(r.ring_order, g))) })).sort((a,b)=>a.avg-b.avg);
+    $('posRows').innerHTML = pos.map(p=>`<li class="row"><span>${CE.GROUPS[p.g]}</span>${bar((p.avg-1)/4*100)}<b>${p.avg.toFixed(1)}</b></li>`).join('');
+    const counts = new Map();
+    withOrder.forEach(r=>{ const k=r.ring_order.join(','); counts.set(k,(counts.get(k)||0)+1); });
+    $('orderRows').innerHTML = [...counts.entries()].sort((a,b)=>b[1]-a[1]).slice(0,3).map(([k,c])=>
+      `<li><b>${Math.round(c/withOrder.length*100)}%</b> ${k.split(',').map(g=>CE.GROUPS[+g].toLowerCase()).join(', ')}</li>`).join('');
+
+    $('defs').innerHTML = DEEP.CIRCLES.filter(q=>q.type==='choice').map((q,qi)=>{
+      const vals = rows.map(r=>r.answers && r.answers[q.id]).filter(v=>typeof v==='number' && v>=0 && v<q.options.length);
+      return `<h3${qi?' style="margin-top:26px"':''}>${esc(q.q)}</h3><ul class="rows defrows">` + q.options.map((o,i)=>{
+        const v = vals.length ? Math.round(vals.filter(x=>x===i).length/vals.length*100) : 0;
+        return `<li class="row"><span>${esc(o)}</span>${bar(v)}<b>${v}%</b></li>`;
+      }).join('') + '</ul>';
+    }).join('');
+  }
+
+  function renderLadder(rows){
+    const sc = rows.filter(r=>r.s);
+    if(!sc.length){ $('ladderRows').innerHTML = '<li class="note">No complete responses yet.</li>'; return; }
+    const list = DEEP.LADDER.map(q=>({ q, avg: mean(sc.map(r=>r.s.ladder[q.touch])) })).sort((a,b)=>b.avg-a.avg);
+    $('ladderRows').innerHTML = list.map(l=>`<li class="row lad"><span>${l.q.short}</span>${bar(l.avg/4*100)}<b>${DEEP.LADDER_SCALE[Math.round(l.avg)]}</b></li>`).join('');
+    const rec = Math.round(mean(sc.map(r=>r.s.receive))), giv = Math.round(mean(sc.map(r=>r.s.give)));
+    const hel = Math.round(mean(sc.map(r=>r.s.hello))), com = Math.round(mean(sc.map(r=>r.s.comfort)));
+    $('dirRows').innerHTML = [['Receiving',rec],['Giving',giv],['Saying hello',hel],['Comfort and affection',com]].map(([l,v])=>`<li class="row"><span>${l}</span>${bar(v)}<b>${v}%</b></li>`).join('');
+    const shift = mean(sc.map(r=>Math.abs(r.s.y - r.s.yRaw)));
+    const down = Math.round(sc.filter(r=>r.s.y < r.s.yRaw).length/sc.length*100);
+    $('shiftNote').textContent = `Weighting by the ladder moves a touchy score by ${shift.toFixed(1)} points on average. It lowers the score for ${down}% of people, which happens when someone is open about the casual stuff and guarded about the touch they rate as close.`;
+  }
+
+  function questionStats(rows){
+    const sc = rows.filter(r=>r.s);
+    const pull = {};
+    if(sc.length >= MIN_QUALITY){
+      S.itemRest(matrix(sc, SHARE)).forEach((v,i)=>{ pull[SHARE[i].id] = v; });
+      S.itemRest(matrix(sc, TOUCH)).forEach((v,i)=>{ pull[TOUCH[i].id] = v; });
+    }
+    return DEEP.SCORED.map((q,order)=>{
+      const max = DEEP.maxOf(q);
+      const vals = rows.map(r=>r.answers && r.answers[q.id]).filter(v=>typeof v==='number' && v>=0 && v<=max);
+      const counts = new Array(max+1).fill(0); vals.forEach(v=>counts[v]++);
+      const norm = vals.map(v=>v/max);
+      const ms = rows.map(r=>r.question_ms && r.question_ms[q.id]).filter(v=>typeof v==='number' && v>0 && v<120000);
+      return { q, order, max, n: vals.length, counts, open: mean(norm), split: sd(norm), med: median(vals), sec: ms.length ? median(ms)/1000 : 0, pull: q.id in pull ? pull[q.id] : null };
+    });
+  }
+
+  function renderQuestions(rows){
+    const qs = questionStats(rows);
+    const sort = $('qSort').value;
+    const by = f => [...qs].sort(f);
+    const sorted = sort==='open' ? by((a,b)=>b.open-a.open) : sort==='guarded' ? by((a,b)=>a.open-b.open)
+      : sort==='split' ? by((a,b)=>b.split-a.split) : sort==='slow' ? by((a,b)=>b.sec-a.sec)
+      : sort==='weak' ? by((a,b)=>(a.pull==null?9:a.pull)-(b.pull==null?9:b.pull)) : qs;
+    const ringColor = i => i===0 ? 'var(--r0)' : `var(--r${i})`;
+    const scaleColor = i => `var(--s${i})`;
+    $('ringLegend').innerHTML = LEVELS.map((g,i)=>`<span><i style="background:${ringColor(i)}"></i>${g}</span>`).join('');
+    $('scaleLegend').innerHTML = SCALE.map((g,i)=>`<span><i style="background:${scaleColor(i)}"></i>${g}</span>`).join('');
+    const head = `<li class="q qd qhead" aria-hidden="true"><span>Question</span><span></span><span class="med">Typical</span><span class="sec">Pull</span><span class="sec">Seconds</span></li>`;
+    $('qlist').innerHTML = head + sorted.map(s=>{
+      const labels = s.q.type==='ring' ? LEVELS : SCALE;
+      const color = s.q.type==='ring' ? ringColor : scaleColor;
+      const segs = s.counts.map((c,i)=>{
+        const p = s.n ? c/s.n*100 : 0;
+        return p ? `<i style="width:${p}%;background:${color(i)}" title="${labels[i]}: ${Math.round(p)}%"></i>` : '';
+      }).join('');
+      const medLabel = s.n ? labels[Math.round(s.med)] : '–';
+      const kind = (s.q.axis==='share' ? 'Sharing' : `Touch, ${s.q.dir==='give'?'giving':'receiving'}`) + (s.q.original ? '' : ' · new');
+      const weak = s.pull!=null && s.pull < .2;
+      return `<li class="q qd" aria-label="${esc(s.q.q)} Typical answer: ${medLabel}. Pull ${r2(s.pull)}.">
+        <span class="name">${esc(s.q.short)}<small>${kind}</small></span>
+        <span class="stack">${segs}</span>
+        <span class="med">${medLabel}</span>
+        <span class="sec"${weak?' style="color:var(--accent);font-weight:700"':''}>${r2(s.pull)}${weak?' low':''}</span>
+        <span class="sec">${s.sec ? s.sec.toFixed(1)+'s' : '–'}</span></li>`;
+    }).join('');
+  }
+
+  const AGE_LABEL = { 'u18':'Under 18', '18-24':'18 to 24', '25-34':'25 to 34', '35-44':'35 to 44', '45-54':'45 to 54', '55+':'55 or older' };
+  const GENDER_LABEL = { woman:'Women', man:'Men', nonbinary:'Nonbinary', other:'Something else' };
+  function renderDemographics(){
+    const st = $('demoState'), grid = $('demoGrid');
+    if(!demographics){ st.textContent = 'Loading.'; grid.hidden = true; return; }
+    if(demographics.error){ st.textContent = 'Couldn\'t load these. The latest supabase/schema.sql adds what this section needs.'; grid.hidden = true; return; }
+    const rows = demographics.rows || [];
+    if(!rows.length){ st.textContent = 'No group has 5 people yet.'; grid.hidden = true; return; }
+    st.textContent = ''; grid.hidden = false;
+    const table = (dim, labels, order) => {
+      const list = rows.filter(r=>r.dimension===dim).sort((a,b)=>order.indexOf(a.grp)-order.indexOf(b.grp));
+      return list.length ? list.map(r=>`<tr><th scope="row" style="font-weight:400;color:var(--ink)">${labels[r.grp]||esc(r.grp)} <span class="count">(${fmtN(+r.n)})</span></th>
+        <td><span class="p">${Math.round(r.personal)}%</span>${bar(r.personal)}</td><td><span class="p">${Math.round(r.touchy)}%</span>${bar(r.touchy,'deep')}</td></tr>`).join('')
+        : '<tr><td colspan="3" class="note">No group has 5 people yet.</td></tr>';
+    };
+    $('ageRows').innerHTML = table('age', AGE_LABEL, DEEP.AGES);
+    $('genderRows').innerHTML = table('gender', GENDER_LABEL, DEEP.GENDERS);
+  }
+
+  /* ---------- CSV (no age or gender: the public can't read those row by row) ---------- */
+  $('csvBtn').addEventListener('click', ()=>{
+    const rows = filtered();
+    const ids = DEEP.ALL.filter(q=>q.type!=='rank' && !q.optional).map(q=>q.id);
+    const cols = ['created_at','quiz_version','duration_ms','device','ref','attempt','carried','ring_order','personal','touchy','touchy_raw','short_personal','short_touchy','consistency','flags',
+      ...ids, ...ids.map(id=>id+'_ms')];
+    const cell = v => v==null ? '' : /[",\n]/.test(String(v)) ? `"${String(v).replace(/"/g,'""')}"` : String(v);
+    const lines = [cols.join(',')].concat(rows.map(r=>cols.map(c=>{
+      if(c==='ring_order') return cell((r.ring_order||[]).join(' '));
+      if(c==='flags') return cell(r.allFlags.join(' '));
+      if(c==='personal') return cell(r.x);
+      if(c==='touchy') return cell(r.y);
+      if(c.endsWith('_ms') && c!=='duration_ms') return cell(r.question_ms && r.question_ms[c.slice(0,-3)]);
+      if(ids.includes(c)) return cell(r.answers && r.answers[c]);
+      return cell(r[c]);
+    }).join(',')));
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([lines.join('\n')], {type:'text/csv'}));
+    a.download = `close-enough-long-version${DEMO?'-demo':''}.csv`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(a.href), 2000);
+  });
+
+  load();
+})();
+</script>
+</body>
+</html>

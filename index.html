@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="A 20-question quiz about how far your circle of closeness reaches and how touchy you are. You end up as a dot on a chart.">
+<meta name="description" content="A quiz about how far your circle of closeness reaches and how touchy you are. You end up as a dot on a chart.">
 <meta name="theme-color" content="#eceff1" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#15121a" media="(prefers-color-scheme: dark)">
 <!-- Link previews. Once the site is live, change og:image to the full address, e.g. https://yoursite.com/close-enough/og-image.png -->
@@ -81,7 +81,10 @@
   .intro .lede{font-size:clamp(18px,2.2vw,21px);margin-top:24px;max-width:36ch}
   .intro .fine{color:var(--muted);font-size:15px;margin-top:14px;max-width:44ch}
   .intro-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px}
-  .consent{margin-top:18px;display:flex;flex-wrap:wrap;align-items:center;gap:4px 14px;font-size:14px;color:var(--muted)}
+  /* the "quick or deep?" prompt after Start: two options that look like the quiz's answers */
+  .pick{display:grid;gap:8px;margin-top:18px}
+  .pick .opt{width:100%}
+  .consent{margin-top:16px;display:flex;flex-wrap:wrap;align-items:center;gap:4px 14px;font-size:14px;color:var(--muted)}
   .check{display:inline-flex;gap:8px;align-items:center;cursor:pointer}
   .check input{width:18px;height:18px;margin:0;accent-color:var(--accent);cursor:pointer}
   .consent .textbtn{font-size:14px}
@@ -174,6 +177,14 @@
     .opts.scale .opt{flex-direction:row;justify-content:space-between;text-align:left;min-height:52px;padding:12px 16px}
   }
   @media (hover:none){ .opt kbd{display:none} }
+  /* long version: part note, skip, and the ring ranking */
+  .partnote{margin-top:10px;font-size:14px;color:var(--muted);max-width:62ch}
+  .partnote b{color:var(--ink)}
+  .skiprow{margin-top:14px}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .rankopt .pos{width:30px;height:30px;flex:none;border-radius:50%;border:1.5px dashed var(--muted);display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;font-variant-numeric:tabular-nums}
+  .rankopt[aria-pressed="true"] .pos{border:none;background:var(--accent);color:var(--on-accent)}
+  .rankdone{margin-top:16px}
   .keyhint{margin-top:22px;font-size:14px;color:var(--muted)}
   @media (hover:none){ .keyhint{display:none} }
 
@@ -208,6 +219,27 @@
   table.groups .touch .track i{background:var(--accent-deep)}
 
   .actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:40px}
+  /* quick result: the offer to keep going */
+  .deeper{margin-top:36px;padding-top:24px;border-top:1px solid var(--line);max-width:58ch}
+  .deeper h3{font-family:var(--display);font-weight:700;font-size:20px;letter-spacing:-.01em}
+  .deeper p{margin-top:6px;font-size:15px;color:var(--muted)}
+  .deeper .btn{margin-top:14px}
+  /* long-version result */
+  .waiting{max-width:520px;min-height:40vh}
+  .waiting h2{font-family:var(--display);font-weight:700;font-size:26px;letter-spacing:-.015em}
+  .waiting p{color:var(--muted);margin-top:6px}
+  .skeleton{height:14px;border-radius:7px;background:var(--line);margin-top:12px;animation:pulse 1.2s ease-in-out infinite}
+  @keyframes pulse{50%{opacity:.45}}
+  .axisnote{font-size:14px;color:var(--muted);margin:-4px 0 6px}
+  .chartnote{font-size:14px;color:var(--muted);margin-top:8px;max-width:52ch}
+  .row.wide{grid-template-columns:11.5em minmax(0,1fr) 3.2em}
+  .row.lad{grid-template-columns:11.5em minmax(0,1fr) 6.2em}
+  .row.lad b{font-weight:400;color:var(--muted);font-size:14px}
+  @media (max-width:420px){ .row.wide{grid-template-columns:9.5em minmax(0,1fr) 3.2em} .row.lad{grid-template-columns:9.5em minmax(0,1fr) 5.6em} }
+  .subhead{font-weight:700;font-size:14px;margin-top:18px}
+  .facts{list-style:none;margin-top:12px;display:grid;gap:8px;font-size:15px}
+  .facts li{padding-left:12px;border-left:3px solid var(--line)}
+  .facts li.warn{border-left-color:var(--accent)}
   dialog.modal{
     border:none;border-radius:16px;padding:20px 20px 16px;margin:auto;
     width:min(var(--mw,540px), calc(100vw - 24px));max-height:calc(100dvh - 24px);overflow-y:auto;
@@ -273,15 +305,11 @@
     <div class="intro">
       <div>
         <h1 id="title">Close Enough</h1>
-        <p class="lede">A quick quiz about how far your circle of closeness reaches, and how much physical contact you're into. You end up as a dot on a chart.</p>
-        <p class="fine">20 questions, a few minutes. Most of them ask "who can..." and you pick the widest ring you'd be okay with. Everyone inside that ring counts too.</p>
+        <p class="lede">A quiz about how far your circle of closeness reaches, and how much physical contact you're into. You end up as a dot on a chart.</p>
+        <p class="fine">About 3 minutes, or 10 for the long version. Most questions ask "who can..." and you pick the widest ring you'd be okay with. Everyone inside that ring counts too.</p>
         <div class="intro-actions">
           <button class="btn" id="startBtn">Start the quiz</button>
           <button class="btn secondary" id="ringsBtn" aria-haspopup="dialog" aria-controls="ringsDialog">Ring guide</button>
-        </div>
-        <div class="consent" id="consentRow" hidden>
-          <label class="check"><input type="checkbox" id="consent"><span>Add my answers to the anonymous group stats</span></label>
-          <button class="textbtn" id="privacyBtn" aria-haspopup="dialog" aria-controls="privacyDialog">What gets saved?</button>
         </div>
       </div>
       <div class="hero-col">
@@ -303,6 +331,25 @@
       <button class="btn" id="startFromRings">Start the quiz</button>
     </dialog>
 
+    <dialog class="modal legend" id="pickDialog" aria-labelledby="pickTitle">
+      <div class="share-head">
+        <div>
+          <h3 id="pickTitle">Quick or deep?</h3>
+          <p class="note">Same quiz, two lengths. You can carry on to the long one after the quick one, too.</p>
+        </div>
+        <button class="close-btn" data-close aria-label="Close"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+      </div>
+      <div class="pick" role="group" aria-label="Which version">
+        <button class="opt pickopt" data-mode="quick"><span class="txt"><span class="t">Quick</span><span class="h">20 questions, about 3 minutes</span></span></button>
+        <button class="opt pickopt" data-mode="deep"><span class="txt"><span class="t">Deep</span><span class="h">52 questions, about 10 minutes. You set up your own rings first, and it shows how you compare.</span></span></button>
+      </div>
+      <!-- shown once a database is connected (config.js). Lives here so everyone passes it on the way in. -->
+      <div class="consent" id="consentRow" hidden>
+        <label class="check"><input type="checkbox" id="consent"><span>Add my answers to the anonymous group stats</span></label>
+        <button class="textbtn" id="privacyBtn" aria-haspopup="dialog" aria-controls="privacyDialog">What gets saved?</button>
+      </div>
+    </dialog>
+
     <dialog class="modal privacy legend" id="privacyDialog" aria-labelledby="privacyTitle">
       <div class="share-head">
         <div>
@@ -312,17 +359,18 @@
         <button class="close-btn" data-close aria-label="Close"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
       </div>
       <ul>
-        <li>Your 20 answers and the scores they add up to</li>
+        <li>Your answers and the scores they add up to</li>
         <li>How long the quiz took you, overall and per question</li>
         <li>Whether you were on a phone or a computer</li>
         <li>The date and time you finished</li>
         <li>Which shared link you came from, if it had a tag (like Instagram)</li>
         <li>Whether this is your first time finishing on this device</li>
+        <li>In the long version: the order you put the rings in, and your age range and gender if you choose to answer those two</li>
       </ul>
       <h4>What doesn't</h4>
       <p>The quiz never asks for your name, email or location, and it doesn't use cookies or tie your answers to you. Your browser keeps a count of how many times you've finished, only so retakes can be marked. That count stays on your device. Like any website, the database host keeps short-lived server logs.</p>
       <h4>Where it goes</h4>
-      <p>Results feed a public stats page. Individual answers can show up there, but with nothing that says who they came from.</p>
+      <p>Results feed a public stats page. Individual answers can show up there, but with nothing that says who they came from. Age and gender are never shown next to anyone's answers. They only appear as group averages, and only once at least 5 people share the same answer.</p>
     </dialog>
   </section>
 
@@ -337,6 +385,7 @@
         <span id="progText">Question 1 of 20</span>
         <span class="bar" aria-hidden="true"><i id="progBar"></i></span>
       </div>
+      <p class="partnote" id="partNote" hidden></p>
       <div class="qgrid">
         <div class="qmain">
           <div class="qbody" id="qbody">
@@ -391,6 +440,76 @@
       <button class="btn secondary" id="retakeBtn">Retake quiz</button>
     </div>
     <p class="stats-link" id="statsLink" hidden><a href="dashboard.html">See how everyone else answered</a></p>
+    <div class="deeper">
+      <h3>Want the long version?</h3>
+      <p>32 more questions, about 7 minutes. It keeps the 20 answers you just gave, puts the rings in your own order, and shows how you compare with everyone else.</p>
+      <button class="btn secondary" id="goDeeper">Keep going</button>
+    </div>
+
+  </section>
+
+  <!-- RESULT, LONG VERSION -->
+  <section id="deepResult" hidden>
+    <div class="topbar">
+      <span class="brand">Close Enough</span>
+    </div>
+    <div class="waiting" id="dWait" aria-live="polite">
+      <h2>Working out where you land</h2>
+      <p>Checking your answers against everyone else's.</p>
+      <div class="skeleton" style="width:72%"></div><div class="skeleton" style="width:48%"></div>
+    </div>
+    <div id="dBody" hidden>
+      <div class="result-head">
+        <p class="kicker">The long version puts you in</p>
+        <h2 id="dTitle" tabindex="-1"></h2>
+        <p id="dDesc"></p>
+      </div>
+      <div class="result-grid">
+        <div>
+          <div id="dChart"></div>
+          <p class="chartnote" id="dChartNote"></p>
+        </div>
+        <div class="stats">
+          <section>
+            <h3>Your scores</h3>
+            <ul class="rows" id="dAxis"></ul>
+            <p class="note" id="dQuick" style="margin-top:14px"></p>
+          </section>
+          <section>
+            <h3>Your rings, closest first</h3>
+            <p class="note" id="dOrderNote"></p>
+            <table class="groups">
+              <thead><tr><th scope="col">Ring</th><th scope="col">Sharing</th><th scope="col">Touch</th></tr></thead>
+              <tbody id="dGroups"></tbody>
+            </table>
+          </section>
+          <section>
+            <h3>How deep the sharing goes</h3>
+            <p class="note">How far out each kind of thing travels. 100% would be strangers.</p>
+            <ul class="rows" id="dTiers"></ul>
+            <p class="subhead">Telling vs letting in</p>
+            <ul class="rows" id="dKinds"></ul>
+          </section>
+          <section>
+            <h3>Touch</h3>
+            <p class="note" id="dTouchNote"></p>
+            <ul class="rows" id="dTouch"></ul>
+            <p class="subhead">Your touch ladder</p>
+            <ul class="rows" id="dLadder"></ul>
+          </section>
+          <section>
+            <h3>How much to trust this</h3>
+            <ul class="facts" id="dTrust"></ul>
+          </section>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn" id="dShareBtn" aria-haspopup="dialog" aria-controls="sharePanel">Share results</button>
+        <button class="btn secondary" id="dRetakeBtn">Take it again</button>
+      </div>
+      <p class="stats-link" id="dStatsLink" hidden><a href="deep.html">See how everyone else answered the long version</a></p>
+    </div>
+  </section>
 
     <dialog class="modal share" id="sharePanel" aria-labelledby="shareTitle">
       <div class="share-head">
@@ -415,26 +534,34 @@
         <textarea class="copybox" id="copyBox" readonly hidden aria-label="Your results as text"></textarea>
       </div>
     </dialog>
-  </section>
 
 </div>
 
 <!-- bump ?v= whenever these files change, so browsers don't mix new and cached copies -->
 <script src="config.js?v=2"></script>
-<script src="quiz-core.js?v=2"></script>
+<script src="quiz-core.js?v=3"></script>
+<script src="deep-core.js?v=1"></script>
 <script>
 (function(){
   const RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // questions, rings and scoring live in quiz-core.js (shared with the stats page)
   const CE = window.CloseEnough;
-  const { GROUPS, DEFS, SCALE, RINGS, QUADS } = CE;
+  const DEEP = window.CloseEnoughDeep;      // the long version (deep-core.js)
+  const { SCALE, RINGS, QUADS } = CE;
+  // ring names and descriptions. The long version swaps these for the person's own ring order.
+  let GROUPS = CE.GROUPS, DEFS = CE.DEFS;
+  let MODE = 'quick';                        // 'quick' or 'deep'
+  let ORDER = DEEP.STANDARD_ORDER.slice();   // long version: the five groups, closest first
+  let carried = null;                        // long version: answers brought over from a quick run just finished
+  let rankPick = [], rankShow = null;        // long version: the ranking question's picks and display order
   // this run's question order: shuffled fresh every time the quiz starts
   const newStack = () => CE.questionStack ? CE.questionStack() : CE.QUESTIONS.slice();
   let QUESTIONS = newStack();
   const RADII = [26,53,80,107,134,161,188];   // you, then the six rings (in a 400 x 400 drawing)
   const CONFIG = window.CLOSE_ENOUGH_CONFIG || {};
   const API = CE.api(CONFIG);
+  const DAPI = DEEP.api(CONFIG);
 
   let idx = 0;
   let answers = new Array(QUESTIONS.length).fill(null);
@@ -462,13 +589,14 @@
   // interactive: each ring can be hovered, tapped or focused; label: accessible name for the whole drawing
   function ringSvg(opts){
     const id = 'rg' + (++ringUid);
+    const names = opts.names || GROUPS;
     let defs='', bands='', labels='';
     for(let k=1;k<=RINGS;k++){
       const mid = (RADII[k-1]+RADII[k])/2, base = mid - 4.8;     // baseline sits so the text is centered in the band
       defs += `<path id="${id}-${k}" d="M${C-base} ${C}A${base} ${base} 0 0 1 ${C+base} ${C}"/>`;
       const a11y = opts.interactive ? ` tabindex="0" role="button" aria-label="${GROUPS[k]}: ${DEFS[k]}"` : '';
       bands += `<path class="band" data-k="${k}" fill-rule="evenodd" d="${circlePath(RADII[k])}${circlePath(RADII[k-1])}" style="animation-delay:${k*85}ms"${a11y}/>`;
-      labels += `<text class="lbl" data-k="${k}" text-anchor="middle"><textPath href="#${id}-${k}" startOffset="50%">${GROUPS[k]}</textPath></text>`;
+      labels += `<text class="lbl" data-k="${k}" text-anchor="middle"><textPath href="#${id}-${k}" startOffset="50%">${names[k]}</textPath></text>`;
     }
     const core = `<circle class="core" data-k="0" cx="${C}" cy="${C}" r="${RADII[0]}" style="fill:var(--accent)"${opts.interactive?' tabindex="0" role="button" aria-label="You, in the middle"':''}/>`;
     const name = opts.label ? `role="group" aria-label="${opts.label}"` : 'aria-hidden="true"';
@@ -500,7 +628,7 @@
   function heroShow(k){
     if(k===null){ setRings(heroSvg, RINGS); $('heroCap').innerHTML = heroDefault; return; }
     setRings(heroSvg, RINGS, { hl:k });
-    $('heroCap').innerHTML = k===0 ? `<b>You</b>Right in the middle. Every ring out from here is a little further from you.` : `<b>${GROUPS[k]}</b>${DEFS[k]}`;
+    $('heroCap').innerHTML = k===0 ? `<b>You</b>Right in the middle. Every ring out from here is a little further from you.` : `<b>${CE.GROUPS[k]}</b>${CE.DEFS[k]}`;
   }
   heroShow(null);
   const ringOf = el => { const t = el && el.closest && el.closest('[data-k]'); return t ? +t.dataset.k : null; };
@@ -513,8 +641,15 @@
   document.addEventListener('click', e=>{ if(!canHover && !heroSvg.contains(e.target)) heroShow(null); });
 
   // question panel (computers): shows how far an answer reaches, or who a question is about
-  $('qRings').innerHTML = ringSvg({});
-  const qSvg = $('qRings').querySelector('svg');
+  let qSvg;
+  function buildPanel(names){ $('qRings').innerHTML = ringSvg({ names }); qSvg = $('qRings').querySelector('svg'); }
+  buildPanel();
+  // order: five group numbers, closest first (long version), or nothing for the usual rings
+  function useRings(order){
+    if(order){ const p = DEEP.personalRings(order); GROUPS = p.groups; DEFS = p.defs; }
+    else { GROUPS = CE.GROUPS; DEFS = CE.DEFS; }
+    buildPanel();
+  }
   const listOf = arr => arr.length<2 ? arr.join('') : arr.slice(0,-1).join(', ') + ' and ' + arr[arr.length-1];
   function updatePanel(level, stagger){
     const q = QUESTIONS[idx];
@@ -526,9 +661,22 @@
       else if(level===1) cap = `<b>Family</b>Just family.`;
       else cap = `<b>Up to ${GROUPS[level].toLowerCase()}</b>Plus ${listOf(GROUPS.slice(1,level).map(g=>g.toLowerCase()))}.`;
       $('qCap').innerHTML = cap;
+    } else if(q.type==='rank'){
+      // the rings fill in from the middle as each group gets placed
+      buildPanel(['', ...rankPick.map(g=>CE.GROUPS[g]), ...new Array(5-rankPick.length).fill(''), 'Strangers']);
+      setRings(qSvg, rankPick.length);
+      $('qCap').innerHTML = rankPick.length<5
+        ? `<b>Closest goes in the middle</b>Each one you tap lands one ring further out.`
+        : `<b>That's your order</b>Strangers stay on the outside.`;
+    } else if(q.who){
+      // the long version shows the person where that group sits in their own order
+      const lvl = MODE==='deep' ? DEEP.posOf(ORDER, q.who) : q.who;
+      setRings(qSvg, 0, { hl:lvl });
+      $('qCap').innerHTML = `<b>This one's about: ${GROUPS[lvl].toLowerCase()}</b>${DEFS[lvl]}`;
     } else {
-      setRings(qSvg, 0, { hl:q.who });
-      $('qCap').innerHTML = q.who ? `<b>This one's about: ${GROUPS[q.who].toLowerCase()}</b>${DEFS[q.who]}` : '';
+      // nothing ring-specific to show: in the long version, the person's own rings
+      setRings(qSvg, 0);
+      $('qCap').innerHTML = MODE==='deep' ? `<b>Your rings</b>${DEEP.isStandard(ORDER) ? 'In the usual order.' : 'In the order you picked.'}` : '';
     }
   }
 
@@ -538,7 +686,7 @@
 
   /* ---------- screens ---------- */
   function show(id){
-    ['intro','quiz','result'].forEach(s => $(s).hidden = (s!==id));
+    ['intro','quiz','result','deepResult'].forEach(s => $(s).hidden = (s!==id));
     window.scrollTo(0,0);
   }
 
@@ -549,10 +697,15 @@
     $('progText').textContent = `Question ${idx+1} of ${n}`;
     $('progBar').style.width = `${(idx/n)*100}%`;
     $('backBtn').disabled = idx===0;
+    const part = MODE==='deep' ? DEEP.PARTS[q.part] : null;
+    $('partNote').hidden = !part;
+    if(part) $('partNote').innerHTML = `<b>${part.name}.</b> ${part.note}`;
 
-    $('kicker').textContent = q.type==='ring'
-      ? 'Pick the widest ring you\'re okay with.'
-      : 'How do you feel about this?';
+    $('kicker').textContent = q.kicker || (
+      q.type==='ring' ? 'Pick the widest ring you\'re okay with.'
+      : q.type==='rank' ? 'Tap them one at a time, closest first.'
+      : q.type==='choice' ? 'Pick the one that fits best.'
+      : 'How do you feel about this?');
     $('prompt').textContent = q.q;
 
     const ans = $('answers');
@@ -574,48 +727,109 @@
         b.addEventListener('mouseleave',()=>updatePanel(answers[idx]));
         b.addEventListener('blur',()=>updatePanel(answers[idx]));
       });
+    } else if(q.type==='rank'){
+      renderRank(ans, current);
     } else {
+      // feeling questions, the touch ladder (its own five labels), and pick-one questions (a plain list)
+      const list = q.type==='choice';
       ans.className = 'answers';
-      let opts = '<div class="opts scale" role="group" aria-label="Answer options">';
-      SCALE.forEach((s,i)=>{
+      let opts = `<div class="opts${list?'':' scale'}" role="group" aria-label="Answer options">`;
+      (list ? q.options : (q.labels || SCALE)).forEach((s,i)=>{
         opts += `<button class="opt" data-v="${i}" aria-pressed="${current===i}"><span class="t">${s}</span><kbd>${i+1}</kbd>${CHECK}</button>`;
       });
-      ans.innerHTML = opts + '</div>';
+      ans.innerHTML = opts + '</div>' + (q.optional ? '<p class="skiprow"><button class="textbtn" id="skipBtn">Skip this one</button></p>' : '');
+      if(q.optional) $('skipBtn').addEventListener('click',()=>choose('skip'));
     }
-    ans.querySelectorAll('.opt').forEach(b=>b.addEventListener('click',()=>choose(+b.dataset.v)));
-    updatePanel(current);
+    if(q.type!=='rank'){
+      ans.querySelectorAll('.opt').forEach(b=>b.addEventListener('click',()=>choose(+b.dataset.v)));
+      updatePanel(current);
+    }
 
     shownAt = performance.now();   // per-question timer starts when the question is on screen
     const body = $('qbody');
     body.classList.remove('swap'); void body.offsetWidth; body.classList.add('swap');
   }
 
+  // long version, first question: tap the five groups in order. Tapping a placed one takes it back out.
+  function renderRank(ans, current){
+    rankPick = Array.isArray(current) ? current.slice() : [];
+    if(!rankShow){ rankShow = [1,2,3,4,5]; for(let i=4;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [rankShow[i],rankShow[j]]=[rankShow[j],rankShow[i]]; } }
+    ans.className = 'answers';
+    ans.innerHTML = '<div><div class="opts" role="group" aria-label="The five groups">' + rankShow.map(g=>
+      `<button class="opt ringopt rankopt" data-g="${g}"><span class="pos" aria-hidden="true"></span>
+        <span class="txt"><span class="t">${CE.GROUPS[g]}</span><span class="h">${CE.DEFS[g]}</span></span></button>`).join('') +
+      `</div><p class="ringnote" id="rankNote" aria-live="polite"></p>
+      <button class="btn rankdone" id="rankDone">That's my order</button></div>`;
+    ans.querySelectorAll('.rankopt').forEach(b=>b.addEventListener('click',()=>{
+      const g=+b.dataset.g, at=rankPick.indexOf(g);
+      if(at>=0) rankPick.splice(at,1); else rankPick.push(g);
+      paintRank();
+    }));
+    $('rankDone').addEventListener('click',()=>{ if(rankPick.length===5) choose(rankPick.slice()); });
+    paintRank();
+  }
+  function paintRank(){
+    $('answers').querySelectorAll('.rankopt').forEach(b=>{
+      const g=+b.dataset.g, at=rankPick.indexOf(g);
+      b.setAttribute('aria-pressed', at>=0);
+      b.querySelector('.pos').textContent = at>=0 ? at+1 : '';
+      b.setAttribute('aria-label', `${CE.GROUPS[g]}: ${CE.DEFS[g]}. ${at>=0 ? `Number ${at+1} of 5.` : 'Not placed yet.'}`);
+    });
+    $('rankDone').disabled = rankPick.length<5;
+    $('rankNote').textContent = rankPick.length<5
+      ? `${rankPick.length} of 5 placed. Tap one again to take it back out. Strangers always stay on the outside.`
+      : 'All five placed. Tap one to take it back out, or keep going.';
+    updatePanel();
+  }
+
   function choose(v){
     if(advancing) return;
     tick();
+    const q = QUESTIONS[idx];
     answers[idx] = v;
-    $('answers').querySelectorAll('.opt').forEach(b=>b.setAttribute('aria-pressed', +b.dataset.v===v));
-    const isRing = QUESTIONS[idx].type==='ring';
+    if(q.type==='rank'){ ORDER = v.slice(); useRings(ORDER); }
+    else $('answers').querySelectorAll('.opt').forEach(b=>b.setAttribute('aria-pressed', +b.dataset.v===v));
+    const isRing = q.type==='ring';
     if(isRing) updatePanel(v, true);
     advancing = true;
     setTimeout(()=>{
       advancing = false;
       if(idx < QUESTIONS.length-1){
         idx++; render(); $('prompt').focus({preventScroll:true});
+      } else if(MODE==='deep'){
+        showDeepResult();
       } else {
         showResult();
       }
     }, RM ? 250 : (isRing ? 700 : 450));
   }
 
-  function start(){
-    idx=0; QUESTIONS = newStack(); answers = new Array(QUESTIONS.length).fill(null);
+  // mode: 'quick' or 'deep'. carry: a finished quick run's answers, so the long version skips those 20.
+  function begin(mode, carry){
+    MODE = mode; carried = carry || null;
+    ORDER = DEEP.STANDARD_ORDER.slice(); rankPick = []; rankShow = null; useRings(null);
+    idx=0; QUESTIONS = mode==='deep' ? DEEP.stack({ carried: !!carry }) : newStack();
+    answers = new Array(QUESTIONS.length).fill(null);
     startedAt=now(); shownAt=now(); qTime=new Array(QUESTIONS.length).fill(0); saved=false;
-    if(consenting()) API.logEvent('start',{device:isPhone()?'mobile':'desktop', ref:REF}).catch(()=>{});
+    if(consenting()) API.logEvent('start',{device:isPhone()?'mobile':'desktop', ref:REF, ...(mode==='deep' ? {quiz_version:DEEP.VERSION} : {})}).catch(()=>{});
     show('quiz'); render(); $('prompt').focus({preventScroll:true});
   }
+  // Start opens a small "quick or deep?" prompt. Picking one starts that version straight away.
+  // The "add my answers" box lives in the prompt, so nobody starts without passing it.
+  // A link with ?mode=deep is for the long version: same prompt, with Deep listed first.
+  if(new URLSearchParams(location.search).get('mode')==='deep'){
+    const pick = document.querySelector('#pickDialog .pick');
+    pick.prepend(pick.querySelector('[data-mode="deep"]'));
+  }
+  function start(){
+    document.documentElement.classList.add('modal-open');
+    $('pickDialog').showModal();
+  }
+  document.querySelectorAll('.pickopt').forEach(b=>b.addEventListener('click',()=>{ $('pickDialog').close(); begin(b.dataset.mode); }));
   $('startBtn').addEventListener('click', start);
-  $('retakeBtn').addEventListener('click', start);
+  $('retakeBtn').addEventListener('click', ()=>begin('quick'));
+  $('goDeeper').addEventListener('click', ()=>begin('deep', answersById()));
+  $('dRetakeBtn').addEventListener('click', ()=>{ MODE='quick'; useRings(null); show('intro'); $('title').scrollIntoView(); });
   $('backBtn').addEventListener('click',()=>{
     if(idx>0){ tick(); idx--; render(); $('prompt').focus({preventScroll:true}); }
   });
@@ -623,13 +837,19 @@
   document.addEventListener('keydown',e=>{
     if($('quiz').hidden || e.metaKey || e.ctrlKey || e.altKey) return;
     const n = parseInt(e.key,10);
-    if(!n) return;
-    const max = QUESTIONS[idx].type==='ring' ? GROUPS.length : SCALE.length;
+    const q = QUESTIONS[idx];
+    if(!n || q.type==='rank') return;
+    const max = q.type==='ring' ? GROUPS.length : q.type==='choice' ? q.options.length : (q.labels || SCALE).length;
     if(n>=1 && n<=max){ e.preventDefault(); choose(n-1); }
   });
 
   /* ---------- scoring (see quiz-core.js) ---------- */
-  const answersById = () => Object.fromEntries(QUESTIONS.map((q,i)=>[q.id, answers[i]]));
+  // skipped and not-yet-answered questions are left out. A long run that continues a quick one includes those 20.
+  const answersById = () => {
+    const out = { ...(carried || {}) };
+    QUESTIONS.forEach((q,i)=>{ if(answers[i]!==null && answers[i]!=='skip') out[q.id] = answers[i]; });
+    return out;
+  };
   const score = () => CE.score(answersById());
   const quadrant = CE.quadrant;
 
@@ -643,6 +863,7 @@
     $('consentRow').hidden=false;
     $('consent').checked = CONFIG.collectByDefault!==false;
     $('statsLink').hidden=false;
+    $('dStatsLink').hidden=false;
   }
   // ?ref=instagram style tag from the link someone used
   const REF = CE.readRef(location.search);
@@ -714,6 +935,8 @@
   const lineFor = m => m===0 ? 'nobody' : GROUPS[m].toLowerCase();
 
   let lastText = '', lastScore = null, lastKey = null;
+  let lastCenters = { x:50, y:50 };          // where the chart's dashed lines sit (the long version can move them)
+  const verTag = () => MODE==='deep' ? { quiz_version: DEEP.VERSION } : {};
 
   function showResult(){
     const s = score();
@@ -735,7 +958,7 @@
     ).join('');
     $('touchRows').innerHTML = rows([['Receiving',s.receive],['Giving',s.give]]);
 
-    lastScore = s; lastKey = key;
+    lastScore = s; lastKey = key; lastCenters = { x:50, y:50 };
     saveResult(s,key);
     $('status').textContent = '';
     $('copyBox').hidden = true;
@@ -756,6 +979,190 @@ Touch receiving ${s.receive}%, giving ${s.give}%`;
       const dot = $('dot');
       dot.style.transform = `translate(${dot.dataset.x}px,${dot.dataset.y}px)`;
       document.querySelectorAll('#result .track i').forEach(i=> i.style.width = i.dataset.w + '%');
+    }));
+  }
+
+  /* ---------- long-version result (the math is in deep-core.js) ---------- */
+  const DEEP_DONE_KEY = 'close-enough:deep-finished';
+  const priorDeep = () => { try{ return Math.max(0, parseInt(localStorage.getItem(DEEP_DONE_KEY),10) || 0); }catch(e){ return 0; } };
+
+  function saveDeep(s, byId){
+    if(saved) return;
+    saved=true;
+    const attempt = Math.min(priorDeep()+1, 100);
+    try{ localStorage.setItem(DEEP_DONE_KEY, String(priorDeep()+1)); }catch(e){}
+    if(!consenting()) return;
+    const ms=Math.round(now()-startedAt);
+    const about = id => typeof byId[id]==='number' ? DEEP.BY_ID[id].keys[byId[id]] : null;
+    DAPI.saveResponse({
+      quiz_version: DEEP.VERSION,
+      duration_ms: Math.min(Math.max(ms,1000),7200000),
+      // the ring order, age and gender go in their own columns
+      answers: Object.fromEntries(Object.entries(byId).filter(([k,v])=>typeof v==='number' && !k.startsWith('d_'))),
+      question_ms: Object.fromEntries(QUESTIONS.map((q,i)=>[q.id, Math.round(qTime[i]||0)])),
+      question_order: QUESTIONS.map(q=>q.id),
+      ring_order: s.order,
+      carried: !!carried,
+      personal: s.x, touchy: s.y, touchy_raw: s.yRaw,
+      short_personal: s.short ? s.short.x : null, short_touchy: s.short ? s.short.y : null,
+      quadrant: s.quadrant,                    // against the fixed 50 lines. The stats page re-centers.
+      consistency: s.consistency, flags: s.flags,
+      age: about('d_age'), gender: about('d_gender'),
+      device: isPhone() ? 'mobile' : 'desktop',
+      ref: REF,
+      attempt
+    }).catch(err=>console.warn('Close Enough: long-version result not saved', err));
+  }
+
+  // Everyone else's scores, for "compared with everyone". Never throws, and gives up after 4 seconds
+  // so nobody waits on a slow connection for their own result.
+  function loadNorms(){
+    if(!DAPI.enabled) return Promise.resolve({ state:'off' });
+    const work = Promise.all([DAPI.deepScores(), DAPI.quickScores()]).then(([deep, quick])=>{
+      const clean = deep.filter(r => (r.attempt||1)===1 && !(Array.isArray(r.flags) && r.flags.length));
+      return {
+        state:'ok',
+        long: DEEP.norms(clean),
+        // the quick quiz's scale: quick finishers, plus long-version takers who didn't come through the quick quiz
+        either: DEEP.norms([
+          ...quick.filter(r => (r.attempt||1)===1 && r.duration_ms>=45000),
+          ...clean.filter(r => !r.carried && typeof r.short_personal==='number').map(r => ({ personal:r.short_personal, touchy:r.short_touchy }))
+        ])
+      };
+    }).catch(()=>({ state:'error' }));
+    return Promise.race([work, new Promise(r=>setTimeout(()=>r({ state:'slow' }), 4000))]);
+  }
+
+  // same chart as the quick result, plus: dashed lines at the typical person, and a shaded margin around the dot
+  function deepChartSvg(s, active, c){
+    const L=52,R=372,T=24,B=344,W=R-L,H=B-T;
+    const px = L + s.x/100*W, py = B - s.y/100*H;
+    const cx = L + c.x/100*W, cy = B - c.y/100*H, mx = L+W/2, my = T+H/2;
+    const lab = (key,tx,ty,anchor) => {
+      const on = key===active;
+      return `<text x="${tx}" y="${ty}" text-anchor="${anchor}" style="font-size:12.5px;font-weight:${on?700:400};fill:${on?'var(--ink)':'var(--muted)'}">${QUADS[key].short}</text>`;
+    };
+    const lx = px > R-60 ? px-16 : px+16;
+    const la = px > R-60 ? 'end' : 'start';
+    const ly = py < T+24 ? py+22 : py-14;
+    return `<svg class="chart" viewBox="0 0 400 400" role="img" aria-label="Chart: how personal ${s.x} percent, give or take ${s.xMargin}, on the horizontal axis. How touchy ${s.y} percent, give or take ${s.yMargin}, on the vertical axis.">
+      <defs><clipPath id="dClip"><rect x="${L}" y="${T}" width="${W}" height="${H}" rx="6"/></clipPath></defs>
+      <rect x="${L}" y="${T}" width="${W}" height="${H}" rx="6" style="fill:var(--surface);stroke:var(--line)"/>
+      <line x1="${cx}" y1="${T}" x2="${cx}" y2="${B}" style="stroke:var(--line);stroke-dasharray:4 5"/>
+      <line x1="${L}" y1="${cy}" x2="${R}" y2="${cy}" style="stroke:var(--line);stroke-dasharray:4 5"/>
+      ${lab('warm',L+12,T+22,'start')}
+      ${lab('hugger',R-12,T+22,'end')}
+      ${lab('vault',L+12,B-12,'start')}
+      ${lab('open',R-12,B-12,'end')}
+      <g clip-path="url(#dClip)"><ellipse cx="${px}" cy="${py}" rx="${Math.max(11, s.xMargin/100*W)}" ry="${Math.max(11, s.yMargin/100*H)}" style="fill:var(--accent);fill-opacity:.16;stroke:var(--accent);stroke-opacity:.5;stroke-dasharray:3 4;${RM?'':'animation:fade .5s ease .7s both'}"/></g>
+      <text x="${L}" y="${B+22}" style="font-size:12px;fill:var(--muted)">Inner circle only</text>
+      <text x="${R}" y="${B+22}" text-anchor="end" style="font-size:12px;fill:var(--muted)">Anyone</text>
+      <text x="${mx}" y="${B+44}" text-anchor="middle" style="font-size:13px;font-weight:700;fill:var(--ink)">How personal</text>
+      <text transform="translate(${L-12} ${B}) rotate(-90)" style="font-size:12px;fill:var(--muted)">Hands off</text>
+      <text transform="translate(${L-12} ${T}) rotate(-90)" text-anchor="end" style="font-size:12px;fill:var(--muted)">Touchy</text>
+      <text transform="translate(${L-32} ${my}) rotate(-90)" text-anchor="middle" style="font-size:13px;font-weight:700;fill:var(--ink)">How touchy</text>
+      <g class="dot" id="dDot" style="transform:translate(${RM?px:mx}px,${RM?py:my}px)" data-x="${px}" data-y="${py}">
+        <circle r="11" style="fill:var(--accent);stroke:var(--surface);stroke-width:3"/>
+        <text x="${lx-px}" y="${ly-py+4}" text-anchor="${la}" style="font-size:14px;font-weight:700;fill:var(--ink)">You</text>
+      </g>
+    </svg>`;
+  }
+
+  const wideRows = list => list.map(([name,val]) => `<li class="row wide"><span>${name}</span>${bar(val)}<b>${val}%</b></li>`).join('');
+  const ringsWord = d => d===1 ? '1 ring' : `${d} rings`;
+
+  async function showDeepResult(){
+    const byId = answersById();
+    let s;
+    try{ s = DEEP.score(byId); }
+    catch(err){ console.warn('Close Enough: could not score the long version', err); MODE='quick'; useRings(null); show('intro'); return; }
+    saveDeep(s, byId);
+
+    $('dWait').hidden = false; $('dBody').hidden = true;
+    show('deepResult');
+    const cmp = await loadNorms();
+    const long = cmp.state==='ok' ? cmp.long : null, either = cmp.state==='ok' ? cmp.either : null;
+    const centers = long && long.ready ? long.centers : { x:50, y:50 };
+    const key = DEEP.quadrant(s.x, s.y, centers);
+    const quad = QUADS[key];
+    const P = DEEP.stats.percentile;
+
+    $('dTitle').textContent = quad.name;
+    const extra = s.shareMedian===s.touchMedian
+      ? `For both sharing and touch, your line usually sits at ${lineFor(s.shareMedian)}.`
+      : `For sharing, your line usually sits at ${lineFor(s.shareMedian)}. For touch, it's ${lineFor(s.touchMedian)}.`;
+    $('dDesc').textContent = `${quad.desc} ${extra}`;
+
+    $('dChart').innerHTML = deepChartSvg(s, key==='middle'?null:key, centers);
+    $('dChartNote').textContent = 'The shaded area is your margin: ask a different set of similar questions and you\'d most likely land somewhere inside it. ' + (
+      long && long.ready ? `The dashed lines mark the typical person out of the ${long.n} who've taken the long version.`
+      : long ? `The dashed lines sit at 50 for now. They move to the typical person once ${DEEP.MIN_NORM} people have taken the long version (${long.n} so far).`
+      : 'The dashed lines sit at 50. Comparing with everyone else isn\'t available right now.');
+
+    const than = (word, vals, v) => long && long.ready ? ` More ${word} than ${P(vals, v)}% of people.` : '';
+    $('dAxis').innerHTML =
+      rows([['How personal', s.x]], true) + `<li class="axisnote">Give or take ${s.xMargin}.${than('personal', long && long.xs, s.x)}</li>` +
+      rows([['How touchy', s.y]], true) + `<li class="axisnote">Give or take ${s.yMargin}.${than('touchy', long && long.ys, s.y)}</li>`;
+    $('dQuick').textContent = s.short
+      ? `On the quick version's scale that's ${s.short.x}% personal and ${s.short.y}% touchy, which is ${QUADS[s.short.quadrant].name}.` +
+        (either && either.ready ? ` More personal than ${P(either.xs, s.short.x)}% and more touchy than ${P(either.ys, s.short.y)}% of the ${either.n} people who've taken either version.` : '')
+      : '';
+
+    const usual = DEEP.isStandard(s.order);
+    $('dOrderNote').textContent = usual ? 'You kept the usual order.'
+      : 'You moved the rings around, so every "who can" question used your order.' +
+        (carried ? ' The 20 answers you brought over from the quick version are counted by how many rings out you went.' : '');
+    $('dGroups').innerHTML = GROUPS.slice(1).map((g,i)=>
+      `<tr><th scope="row" style="font-weight:400;font-size:15px;color:var(--ink)">${i+1}. ${g}</th>
+        <td><span class="pct">${s.shareGroups[i]}%</span>${bar(s.shareGroups[i])}</td>
+        <td class="touch"><span class="pct">${s.touchGroups[i]}%</span>${bar(s.touchGroups[i])}</td></tr>`
+    ).join('');
+
+    $('dTiers').innerHTML = wideRows([['Surface stuff', s.tiers.surface], ['Personal stuff', s.tiers.personal], ['The heavy stuff', s.tiers.deep]]);
+    $('dKinds').innerHTML = wideRows([['Telling people things', s.tell], ['Letting people in', s.access]]);
+
+    $('dTouchNote').textContent = s.y===s.yRaw
+      ? `Counting what each kind of touch means to you didn't move your score. It's ${s.y}% either way.`
+      : `Counting what each kind of touch means to you moved your touchy score from ${s.yRaw}% to ${s.y}%.`;
+    $('dTouch').innerHTML = wideRows([['Receiving', s.receive], ['Giving', s.give], ['Saying hello', s.hello], ['Comfort and affection', s.comfort]]);
+    $('dLadder').innerHTML = [...DEEP.LADDER].sort((a,b)=>s.ladder[b.touch]-s.ladder[a.touch]).map(q=>
+      `<li class="row lad"><span>${q.short}</span>${bar(s.ladder[q.touch]/4*100)}<b>${DEEP.LADDER_SCALE[s.ladder[q.touch]]}</b></li>`).join('');
+
+    const trust = [];
+    if(s.twinDiffs.length){
+      const worst = Math.max(...s.twinDiffs);
+      trust.push(worst<=1
+        ? ['', 'Two questions were asked twice in different words. Your answers matched' + (worst===1 ? ' within one ring.' : '.')]
+        : [s.flags.includes('inconsistent')?'warn':'', `Two questions were asked twice in different words. On one of them your answers were ${ringsWord(worst)} apart.`]);
+    }
+    if(s.attention!==null) trust.push(s.attention ? ['', 'You got the attention check.'] : ['warn', 'You missed the attention check, the one that said to pick Friends.']);
+    if(s.flags.includes('same_answer')) trust.push(['warn', 'Almost every "who can" answer was the same ring, which usually means tapping through.']);
+    if(s.flags.includes('anchors')) trust.push(['warn', 'An easy question got a tighter answer than a much harder one, which usually means a mis-tap somewhere.']);
+    trust.push(s.flags.length
+      ? ['warn', 'Because of that, this run is marked on the stats page and left out of the group numbers by default.']
+      : ['', 'Nothing looks off, so this run counts in the group numbers as is.']);
+    $('dTrust').innerHTML = trust.map(([cls,t])=>`<li${cls?` class="${cls}"`:''}>${t}</li>`).join('');
+
+    lastScore = s; lastKey = key; lastCenters = centers;
+    $('status').textContent = '';
+    $('copyBox').hidden = true;
+    if($('sharePanel').open) $('sharePanel').close();
+    lastText =
+`Close Enough, the long version: ${quad.name}
+How personal: ${s.x}% (give or take ${s.xMargin})
+How touchy: ${s.y}% (give or take ${s.yMargin})
+My rings, closest first: ${GROUPS.slice(1).join(', ')}
+Sharing, by ring: ${GROUPS.slice(1).map((g,i)=>`${g} ${s.shareGroups[i]}%`).join(', ')}
+Touch, by ring: ${GROUPS.slice(1).map((g,i)=>`${g} ${s.touchGroups[i]}%`).join(', ')}
+Touch receiving ${s.receive}%, giving ${s.give}%`;
+
+    $('dWait').hidden = true; $('dBody').hidden = false;
+    window.scrollTo(0,0);
+    $('dTitle').focus({preventScroll:true});
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      const dot = $('dDot');
+      dot.style.transform = `translate(${dot.dataset.x}px,${dot.dataset.y}px)`;
+      document.querySelectorAll('#deepResult .track i').forEach(i=> i.style.width = i.dataset.w + '%');
     }));
   }
 
@@ -803,9 +1210,10 @@ Touch receiving ${s.receive}%, giving ${s.give}%`;
     const a0=Math.max(1,(size-60)/520), L=x+60*a0, W=size-60*a0, sc=W/520;
     return {h:W+80*a0, draw(y,P){
       const T=y, B=T+W, R=L+W, cx=L+W/2, cy=T+W/2;
+      const lx=L+lastCenters.x/100*W, ly=B-lastCenters.y/100*W;     // dashed lines: 50 / 50, or the typical person
       ctx.fillStyle=P.surface; ctx.strokeStyle=P.line; ctx.lineWidth=2; rr(ctx,L,T,W,W,12*sc); ctx.fill(); ctx.stroke();
       ctx.setLineDash([7*sc,9*sc]); ctx.lineWidth=1.5; ctx.beginPath();
-      ctx.moveTo(cx,T); ctx.lineTo(cx,B); ctx.moveTo(L,cy); ctx.lineTo(R,cy); ctx.stroke(); ctx.setLineDash([]);
+      ctx.moveTo(lx,T); ctx.lineTo(lx,B); ctx.moveTo(L,ly); ctx.lineTo(R,ly); ctx.stroke(); ctx.setLineDash([]);
       const q=(k,tx,ty,al)=>{ const on=k===lastKey; text(ctx,QUADS[k].short,tx,ty,F(on?700:400,19*sc,BF),on?P.ink:P.muted,al); };
       q('warm',L+18*sc,T+34*sc,'left'); q('hugger',R-18*sc,T+34*sc,'right');
       q('vault',L+18*sc,B-20*sc,'left'); q('open',R-18*sc,B-20*sc,'right');
@@ -902,6 +1310,7 @@ Touch receiving ${s.receive}%, giving ${s.give}%`;
 
     drawMark(ctx,pad,pad,46,P);
     text(ctx,'Close Enough',pad+62,pad+35,F(700,36,DF),P.ink);
+    if(MODE==='deep') text(ctx,'The long version',W-pad,pad+33,F(400,24,BF),P.muted,'right');
     text(ctx,'How personal and how touchy are you?',pad,H-pad+6,F(400,24,BF),P.muted);
 
     const blocks=[]; const add=(b,gap)=>blocks.push({b,gap:gap||0});
@@ -982,19 +1391,32 @@ Touch receiving ${s.receive}%, giving ${s.give}%`;
     $('nextSlide').hidden = i===slides.length-1;
     $('status').textContent='';
   }
+  // heading: the slide a dot or arrow tap is sliding to. While it's set, the dots stay put on it.
+  let heading=null, headingTimer=0, carFrame=0;
+  const arrive = () => { heading=null; clearTimeout(headingTimer); };
   function goTo(i){
     i=Math.max(0,Math.min(slides.length-1,i));
     const left = i*car.clientWidth;
+    heading=i; clearTimeout(headingTimer);
+    // some phones drop a smooth scroll halfway in a snapping strip. If it hasn't landed in time, jump there.
+    headingTimer=setTimeout(()=>{ if(heading===i && Math.abs(car.scrollLeft-left)>2) car.scrollLeft=left; heading=null; }, 900);
     car.scrollTo({left, behavior:RM?'auto':'smooth'});
     setCurrent(i);
   }
-  let scrollTimer;
+  // a finger on the strip takes over from any tap that was still sliding
+  car.addEventListener('pointerdown', arrive);
+  car.addEventListener('touchstart', arrive, {passive:true});
   car.addEventListener('scroll',()=>{
-    clearTimeout(scrollTimer);
-    scrollTimer=setTimeout(()=>{
-      const best=Math.max(0,Math.min(slides.length-1,Math.round(car.scrollLeft/car.clientWidth)));
-      if(best!==current) setCurrent(best);
-    },80);
+    if(carFrame) return;
+    carFrame=requestAnimationFrame(()=>{
+      carFrame=0;
+      if(!car.clientWidth) return;
+      const pos=car.scrollLeft/car.clientWidth;
+      if(heading!==null){ if(Math.abs(pos-heading)<0.02) arrive(); return; }
+      // follow the swipe as it happens, but only switch once it's clearly past halfway, so a slow
+      // swipe sitting near the middle doesn't flick the dots back and forth
+      if(Math.abs(pos-current)>=0.6) setCurrent(Math.max(0,Math.min(slides.length-1,Math.round(pos))));
+    });
   });
   car.addEventListener('keydown',e=>{
     if(e.key==='ArrowRight'){ e.preventDefault(); goTo(current+1); }
@@ -1006,19 +1428,21 @@ Touch receiving ${s.receive}%, giving ${s.give}%`;
   setCurrent(0);
 
   const dlg=$('sharePanel');
-  $('shareBtn').addEventListener('click',()=>{
+  const openShare = ()=>{
     if(CARDS[0].theme===pageTheme()) buildCarousel();
     $('status').textContent=''; $('copyBox').hidden=true;
     document.documentElement.classList.add('modal-open');
     dlg.showModal();
-    if(consenting()) API.logEvent('share_open').catch(()=>{});
+    if(consenting()) API.logEvent('share_open', verTag()).catch(()=>{});
     car.scrollLeft=0; setCurrent(0);
     updatePreview();
-  });
+  };
+  $('shareBtn').addEventListener('click', openShare);
+  $('dShareBtn').addEventListener('click', openShare);
   // shared modal behavior: close button, tap outside, and unlocking page scroll
   document.querySelectorAll('dialog.modal').forEach(d=>{
     d.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>d.close()));
-    d.addEventListener('close',()=>document.documentElement.classList.remove('modal-open'));
+    d.addEventListener('close',()=>{ if(!document.querySelector('dialog[open]')) document.documentElement.classList.remove('modal-open'); });   // unless another one just opened
     d.addEventListener('click',e=>{
       if(e.target!==d) return;
       const r=d.getBoundingClientRect();
@@ -1039,9 +1463,9 @@ Touch receiving ${s.receive}%, giving ${s.give}%`;
     const st=$('status');
     const blob=slideBlobs[current], url=slideUrls[current];
     if(!blob){ st.textContent='The picture is still being made. Try again in a second.'; return; }
-    const filename=`close-enough-${CARDS[current].key}-${CARDS[current].theme}.png`;
+    const filename=`close-enough-${MODE==='deep'?'long-':''}${CARDS[current].key}-${CARDS[current].theme}.png`;
     const dl=await dlReady;
-    const logged = () => { if(consenting()) API.logEvent('download',{card:`${CARDS[current].key}-${CARDS[current].theme}`}).catch(()=>{}); };
+    const logged = () => { if(consenting()) API.logEvent('download',{card:`${CARDS[current].key}-${CARDS[current].theme}`, ...verTag()}).catch(()=>{}); };
     if(dl===undefined){
       // on phones, the share sheet has "Save Image" and lets people post it straight away
       try{

@@ -1,10 +1,11 @@
 # Close Enough
 
-A 20-question quiz about two things: how far your circle of closeness reaches, and how touchy you are. You end up as a dot on a chart, with a picture you can share. There's also a stats page that shows how everyone who's taken it answered.
+A quiz about two things: how far your circle of closeness reaches, and how touchy you are. You end up as a dot on a chart, with a picture you can share. It comes in two lengths: the quick one (20 questions, about 3 minutes) and the long one (52 questions, about 10 minutes). Each has its own stats page.
 
-- **Quiz:** `index.html`
-- **Stats:** `dashboard.html` (add `?demo=1` to the address to see it with made-up data)
-- **How the scoring works:** [METHODOLOGY.md](METHODOLOGY.md)
+- **Quiz:** `index.html` (both versions start here; `?mode=deep` lists the long one first)
+- **Stats, quick version:** `dashboard.html` (add `?demo=1` to the address to see it with made-up data)
+- **Stats, long version:** `deep.html` (same `?demo=1` trick)
+- **How the scoring works:** [METHODOLOGY.md](METHODOLOGY.md) for the quick version, [METHODOLOGY-DEEP.md](METHODOLOGY-DEEP.md) for the long one
 
 ![The stats page, shown with demo data](docs/stats-preview.png)
 
@@ -12,15 +13,17 @@ A 20-question quiz about two things: how far your circle of closeness reaches, a
 
 | File | What it is |
 |---|---|
-| `index.html` | The quiz, results page and share pictures |
-| `dashboard.html` | The stats page |
-| `quiz-core.js` | The questions, the rings, the scoring math, and the small bit of code that saves and reads results. Both pages use it. |
+| `index.html` | The quiz (both versions), results pages and share pictures |
+| `dashboard.html` | The quick version's stats page |
+| `deep.html` | The long version's stats page |
+| `quiz-core.js` | The quick version: questions, the rings, the scoring math, and the small bit of code that saves and reads results. |
+| `deep-core.js` | The long version: its extra questions, its scoring, and the group statistics its stats page uses. Builds on `quiz-core.js` and doesn't change it. |
 | `config.js` | Where your database address and key go. Empty means the quiz works but saves nothing. |
-| `commentary.md` | Your notes. Whatever you write shows up on the stats page. |
+| `commentary.md` and `commentary-deep.md` | Your notes. Whatever you write shows up on the matching stats page. |
 | `supabase/schema.sql` | Sets up the database tables. Run it once. |
 | `.github/workflows/keep-awake.yml` and `scripts/keep-awake.js` | Writes a heartbeat to the database every 3 days so the free plan doesn't pause it |
-| `tests/scoring.test.js` | Checks the scoring math. Run `node --test` from this folder. |
-| `METHODOLOGY.md` | The scoring, explained without code |
+| `tests/scoring.test.js` and `tests/deep.test.js` | Check the scoring math for each version. Run `node --test` from this folder. |
+| `METHODOLOGY.md` and `METHODOLOGY-DEEP.md` | The scoring for each version, explained without code |
 | `og-image.png` | The preview picture when someone pastes the link into a chat |
 
 No build step, no framework. It's plain HTML, CSS and JavaScript.
@@ -65,7 +68,7 @@ The quiz saves results to a free Supabase database. It takes about ten minutes.
 
 The publishable key is meant to be public, and the database rules in `schema.sql` only let the public add rows and read them. Never put the **secret** key (or the old `service_role` key) in `config.js`.
 
-Once stats are on, the start screen shows an "Add my answers to the anonymous group stats" checkbox with a "What gets saved?" link, and the results page links to the stats page.
+Once stats are on, the "Quick or deep?" prompt that opens after Start shows an "Add my answers to the anonymous group stats" checkbox with a "What gets saved?" link, and the results page links to the stats page.
 
 ## What gets saved
 
@@ -78,11 +81,26 @@ Only when the checkbox is checked:
 - the tag from the link they used, if it had one (see "Sharing links with tags")
 - whether it's their first time finishing on that device
 - the order the questions were shown in (it's shuffled for every run)
+- in the long version: the order they put the rings in, and their age range and gender if they chose to answer those two
 - a few activity counts: quiz started, share window opened, picture downloaded (these give the finish rate)
 
 No names, emails, locations, cookies or accounts. To mark retakes, the browser keeps a count of how many times it has finished the quiz. That count stays on the person's device and never identifies them. Supabase keeps short-lived server logs like any web host.
 
 Set `collectByDefault: false` in `config.js` if you'd rather people opt in than opt out. Since the site is public, it's worth adding a proper privacy policy page too. The "What gets saved?" window describes what the code does, but it isn't a legal policy.
+
+## The long version
+
+Tapping Start asks "Quick or deep?" and starts whichever one gets picked. A link ending in `?mode=deep` shows the same question with Deep listed first. Anyone who finishes the quick one also gets a "Keep going" offer on their results, which carries their 20 answers over so they only answer the other 32.
+
+What the long version adds, in short: people put the rings in their own order first, rate how close each kind of touch feels (which weights their touchy score), answer 12 extra questions that include some easy ones, and get a margin of error and a comparison with everyone else. It also checks each run with two repeated questions and an attention check. [METHODOLOGY-DEEP.md](METHODOLOGY-DEEP.md) has the details.
+
+**Turning it on for an existing site.** Open Supabase, go to **SQL Editor**, paste in the current `supabase/schema.sql` and run it again. It's safe to re-run. It adds a `deep_responses` table and leaves the quick version's table alone. Until that's done, the long version still works for whoever takes it, but nothing is saved and `deep.html` shows an error.
+
+**Results are kept apart.** The quick version saves to `responses` and the long one to `deep_responses`, and each stats page reads only its own. The scales are different, so mixing them would make both sets of numbers worse.
+
+**Age and gender.** The last two questions are optional. They're saved in columns the public key can't read, so they never show next to anyone's answers. `deep.html` only gets averages for groups of at least 5 people. You can see the raw columns yourself in Supabase's Table editor.
+
+**Changing its questions.** They're at the top of `deep-core.js`, with the same rule as below: reword freely, but a different question gets a new `id` and a new `VERSION`. Touch questions need a `touch` that matches a rung of the ladder.
 
 ## Sharing links with tags
 
@@ -145,7 +163,7 @@ Questions live in `quiz-core.js`. Each one has an `id` (like `s_cry`) that the s
 
 Run `node --test` afterward to make sure the scoring still adds up.
 
-**When you update files on the live site,** bump the `?v=` number on the `config.js` and `quiz-core.js` lines near the bottom of `index.html` and `dashboard.html` (for example `?v=2` to `?v=3`). GitHub Pages lets browsers keep old copies for a few minutes, and the number makes them fetch the new ones together.
+**When you update files on the live site,** bump the `?v=` number on the `config.js`, `quiz-core.js` and `deep-core.js` lines near the bottom of `index.html`, `dashboard.html` and `deep.html` (for example `?v=2` to `?v=3`). GitHub Pages lets browsers keep old copies for a few minutes, and the number makes them fetch the new ones together.
 
 ## Known limits
 
