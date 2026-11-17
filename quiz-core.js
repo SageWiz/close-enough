@@ -210,13 +210,15 @@
       },
 
       /** How many events of a type exist (uses PostgREST's exact count). */
-      /** filters: { since: ISO date, device: 'mobile'|'desktop', ref: a tag, or 'none' for untagged } */
+      /** filters: { since: ISO date, device: 'mobile'|'desktop', ref: a tag, or 'none' for untagged,
+       *             version: a quiz version, so quick-quiz starts and long-version starts stay separate } */
       async countEvents(type, filters) {
         const f = filters || {};
         const since = f.since ? `&created_at=gte.${encodeURIComponent(f.since)}` : '';
         const dev = f.device && f.device !== 'all' ? `&device=eq.${f.device}` : '';
         const ref = !f.ref || f.ref === 'all' ? '' : f.ref === 'none' ? '&ref=is.null' : `&ref=eq.${encodeURIComponent(f.ref)}`;
-        const r = await fetch(`${url}/rest/v1/events?select=id&type=eq.${type}${since}${dev}${ref}`, {
+        const ver = f.version ? `&quiz_version=eq.${encodeURIComponent(f.version)}` : '';
+        const r = await fetch(`${url}/rest/v1/events?select=id&type=eq.${type}${ver}${since}${dev}${ref}`, {
           headers: headers({ Prefer: 'count=exact', Range: '0-0', 'Range-Unit': 'items' })
         });
         if (!r.ok) throw new Error(`events: ${r.status}`);

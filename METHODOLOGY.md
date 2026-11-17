@@ -1,6 +1,6 @@
 # How Close Enough scores you
 
-This is the plain-English version of the math in [`quiz-core.js`](quiz-core.js). If the two ever disagree, the code wins, and the tests in [`tests/scoring.test.js`](tests/scoring.test.js) pin it down.
+This is the plain-English version of the math in [`quiz-core.js`](quiz-core.js). It covers the quick, 20-question version. The 52-question version has its own page: [METHODOLOGY-DEEP.md](METHODOLOGY-DEEP.md). If the two ever disagree, the code wins, and the tests in [`tests/scoring.test.js`](tests/scoring.test.js) pin it down.
 
 ## The two things it measures
 
@@ -119,7 +119,7 @@ The [stats page](dashboard.html) groups everyone who left "add my answers" check
 - **Typical answer.** Per question, the stats page uses the ordinary median. The coloured bar shows the full spread, so you can see when a "typical" answer hides a big split.
 - **Most split.** Questions are ranked by the standard deviation of their answers, after scaling to 0 to 1.
 - **Seconds per question.** The median time the question was on screen before it was answered, including any time spent after coming back to it. Because the order is shuffled, a question isn't slower just because it always came first.
-- **Finish rate.** Finished quizzes divided by started quizzes, counting only people who had the box checked when they started. It follows the time, device and source filters, and counts retakes and rushed runs, since those still finished.
+- **Finish rate.** Finished quick quizzes divided by started quick quizzes, counting only people who had the box checked when they started. Long-version starts are counted on their own page. It follows the time, device and source filters, and counts retakes and rushed runs, since those still finished.
 
 ## Known limits
 
